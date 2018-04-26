@@ -2,10 +2,6 @@ package scrapper.wizzair;
 
 import io.restassured.RestAssured;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import scrapper.wizzair.dto.TimetableResponseDto;
 
 import java.io.IOException;
