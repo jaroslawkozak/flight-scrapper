@@ -6,6 +6,6 @@ import java.util.List;
 
 @Data
 public class TimetableResponseDto {
-    private List<FlightDto> outboundFlights;
-    private List<FlightDto> returnFlights;
+    private List<ResponseFlightDto> outboundFlights;
+    private List<ResponseFlightDto> returnFlights;
 }
