@@ -22,6 +22,7 @@ public class MySqlConnection {
     public static Connection getConnection(String dbName) {
         logger.debug("Connecting to database...");
         try {
+        	logger.debug("1");
             Class.forName(DB_DRIVER);
         } catch (ClassNotFoundException e) {
             logger.error("Driver " + DB_DRIVER + " not found.");
@@ -30,8 +31,9 @@ public class MySqlConnection {
         }
 
         Connection connection = null;
-
+        logger.debug("2");
         try {
+        	logger.debug("3");
             connection = DriverManager
             .getConnection(DB_CONN + dbName, DB_USER, DB_PASS);
 
@@ -40,7 +42,7 @@ public class MySqlConnection {
             e.printStackTrace();
             return null;
         }
-
+        logger.debug("4");
         if (connection != null) {
             logger.debug("Connected");
         } else {
