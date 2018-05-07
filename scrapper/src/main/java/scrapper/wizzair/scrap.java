@@ -39,7 +39,7 @@ public class scrap {
                 .contentType("application/json")
                 .body(mapper.writeValueAsString(request))
                 .when()
-                .post("https://be.wizzair.com/7.11.1/Api/search/timetable")
+                .post("https://be.wizzair.com/7.12.0/Api/search/timetable")
                 .asString()
                 .toString();
         

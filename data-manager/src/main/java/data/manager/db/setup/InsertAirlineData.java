@@ -17,15 +17,14 @@ public class InsertAirlineData {
     
     public static void main(String[] args) {
         logger.debug("Insertng airline data to database");
-        try(BufferedReader br = new BufferedReader(new FileReader(AIRPORTS_DATA_FILE_PATH));
-                Connection connection = MySqlConnection.getConnection()){
+        try(BufferedReader br = new BufferedReader(new FileReader(AIRPORTS_DATA_FILE_PATH))){
             String line = null;           
             while((line = br.readLine()) != null ) {     
                 String[] lineArr = line.split(";");
                 AirlineDao airportData = new AirlineDao()
                         .setAirlineId(Integer.parseInt(lineArr[0]))
                         .setAirlineName(lineArr[1].replaceAll("\"", ""));
-                airportData.insert(connection);
+                airportData.insert();
             }
         } catch (FileNotFoundException e) {
             logger.error("Airline data file not found!");
@@ -33,8 +32,6 @@ public class InsertAirlineData {
         } catch (IOException e) {
             logger.error("There is an issue with airline data file!");
             e.printStackTrace();
-        } catch (SQLException sqlEx) {
-            logger.error(sqlEx.getMessage());
         }
     }
 }

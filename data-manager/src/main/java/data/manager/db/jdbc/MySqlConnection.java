@@ -5,7 +5,9 @@ import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class MySqlConnection {
     private final static Logger logger = Logger.getLogger(MySqlConnection.class);
@@ -14,15 +16,39 @@ public class MySqlConnection {
     private final static String DB_NAME = MysqlConfiguration.getDatabase();
     private final static String DB_USER = MysqlConfiguration.getUser();
     private final static String DB_PASS = MysqlConfiguration.getPassword();
+    private static Connection CONNECTION;
+    private static ConnectionKiller connKiller;
     
-    public static Connection getConnection() {
-        return getConnection(DB_NAME);
-    } 
+    public static ResultSet executeQuery(String query) throws SQLException {
+        Statement statement = getConnection().createStatement();
+        return statement.executeQuery(query);
+    }
     
-    public static Connection getConnection(String dbName) {
+    public static int executeUpdate(String query) throws SQLException {
+        try (Statement statement = getConnection().createStatement()){
+            return statement.executeUpdate(query);
+        } catch (SQLException e) {
+            throw e;
+        }      
+    }
+       
+    private static Connection getConnection() {
+        try {
+            if(CONNECTION == null || CONNECTION.isClosed()) {
+                return MySqlConnection.startConnection(DB_NAME);
+            } else {
+                connKiller.resetTimer();  
+                return MySqlConnection.CONNECTION;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+        
+    private static Connection startConnection(String dbName) {
         logger.debug("Connecting to database...");
         try {
-        	logger.debug("1");
             Class.forName(DB_DRIVER);
         } catch (ClassNotFoundException e) {
             logger.error("Driver " + DB_DRIVER + " not found.");
@@ -30,24 +56,27 @@ public class MySqlConnection {
             return null;
         }
 
-        Connection connection = null;
-        logger.debug("2");
         try {
-        	logger.debug("3");
-            connection = DriverManager
+        	MySqlConnection.CONNECTION = DriverManager
             .getConnection(DB_CONN + dbName, DB_USER, DB_PASS);
-
         } catch (SQLException e) {
             logger.error("Connection Failed! Check output console");
             e.printStackTrace();
             return null;
         }
-        logger.debug("4");
-        if (connection != null) {
+        if (MySqlConnection.CONNECTION != null) {
             logger.debug("Connected");
         } else {
             logger.error("Failed to make connection!");
         }
-        return connection;
+        connKiller = new ConnectionKiller(MySqlConnection.CONNECTION, 60000);
+        Thread thread = new Thread(connKiller);
+        thread.start();
+        
+        return MySqlConnection.CONNECTION;
+    }
+
+    private static void resetTimer() {
+        connKiller.resetTimer();        
     }
 }

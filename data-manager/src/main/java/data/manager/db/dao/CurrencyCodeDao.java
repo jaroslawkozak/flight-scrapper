@@ -1,16 +1,15 @@
 package data.manager.db.dao;
 
-import data.manager.db.dao.exception.AirportDataException;
 import data.manager.db.dao.exception.CurrencyDataException;
 import data.manager.db.jdbc.MySqlConnection;
+import data.manager.db.setup.InsertCurrencyData;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.apache.log4j.Logger;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,45 +17,39 @@ import java.util.Map;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
 public class CurrencyCodeDao extends AbstractDao {
+    private final static Logger logger = Logger.getLogger(CurrencyCodeDao.class);
     private int currencyId;
     private String currencyCode;
     private String currencyName;
     private static Map<String, CurrencyCodeDao> resultsBuffer = new HashMap<String,CurrencyCodeDao>();
 
     @Override
-    public void insert(Connection connection) {
+    public void insert() {
         StringBuffer insertTableSQL = new StringBuffer().append(
                 "INSERT INTO currencyCodes (currencyId, currencyCode, currencyName) VALUES ")
                 .append("(" + this.currencyId).append(",\"" + this.currencyCode + "\"")
-                .append(",\"" + this.currencyName + "\"").append(")");
-        try (Statement statement = connection.createStatement()) {
-            logger.debug(insertTableSQL);
-            statement.executeUpdate(insertTableSQL.toString());
-            logger.debug("Record is inserted into table!");
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
+                .append(",\"" + this.currencyName + "\"").append(")");      
+        executeUpdate(insertTableSQL);  
     }
 
-    public static CurrencyCodeDao select(String currencyCode) throws SQLException {
+    public static CurrencyCodeDao select(String currencyCode){
         if(resultsBuffer.containsKey(currencyCode)) {
             return resultsBuffer.get(currencyCode);
         }
-        try (Connection connection = MySqlConnection.getConnection();
-                Statement statement = connection.createStatement()) {
 
+        try {
             if (!isCountOne(
-                    statement.executeQuery("SELECT COUNT(*) FROM currencyCodes WHERE currencyCode='"
+                    MySqlConnection.executeQuery("SELECT COUNT(*) FROM currencyCodes WHERE currencyCode='"
                             + currencyCode + "'"))) {
                 throw new CurrencyDataException(
                         "There is an issue with result data, there should be exactly 1 result");
+                
             }
-
             StringBuffer selectSQL = new StringBuffer().append(
                     "SELECT * FROM currencyCodes WHERE currencyCode='" + currencyCode + "'");
 
             logger.debug(selectSQL);
-            ResultSet rs = statement.executeQuery(selectSQL.toString());
+            ResultSet rs = MySqlConnection.executeQuery(selectSQL.toString());
             rs.first();
             CurrencyCodeDao result = new CurrencyCodeDao().setCurrencyId(rs.getInt(1))
                     .setCurrencyCode(rs.getString(2)).setCurrencyName(rs.getString(3));
@@ -64,7 +57,7 @@ public class CurrencyCodeDao extends AbstractDao {
             return result;
         } catch (SQLException e) {
             logger.error(e.getMessage());
-            throw e;
         }
+        return null;    
     }
 }

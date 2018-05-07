@@ -1,16 +1,14 @@
 package data.manager.db.dao;
 
 import data.manager.db.dao.exception.AirportDataException;
-import data.manager.db.dao.exception.CurrencyDataException;
 import data.manager.db.jdbc.MySqlConnection;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.apache.log4j.Logger;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +16,7 @@ import java.util.Map;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper=false)
 public class AirportDao extends AbstractDao {
+    private final static Logger logger = Logger.getLogger(AirportDao.class);
     private int airportId;
     private String name;
     private String city;
@@ -49,7 +48,7 @@ public class AirportDao extends AbstractDao {
     }
     
     @Override
-    public void insert(Connection connection) {
+    public void insert() {
         StringBuffer insertTableSQL = new StringBuffer()
                         .append("INSERT INTO airports (airportId, name, city, country, IATA, ICAO, latitude, longitude, altitude, timezone, DST) VALUES ")
                         .append("(" + this.airportId)
@@ -64,62 +63,54 @@ public class AirportDao extends AbstractDao {
                         .append(", " + this.timezone)
                         .append(",\"" + this.DST + "\"")
                         .append(")");        
-        try(Statement statement = connection.createStatement()){                 
-            logger.debug(insertTableSQL);
-            statement.executeUpdate(insertTableSQL.toString());
-            logger.debug("Record is inserted into table!");
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
+        executeUpdate(insertTableSQL);
     }
     
-    public static AirportDao select(String IATA) throws SQLException {
+    public static AirportDao select(String IATA) {
         if(resultsBufferByIATA.containsKey(IATA)) {
             return resultsBufferByIATA.get(IATA);
-        }
-        try(Connection connection = MySqlConnection.getConnection();
-                Statement statement = connection.createStatement()){                             
+        }               
+         
+        try {
             if (!isCountOne(
-                    statement.executeQuery("SELECT COUNT(*) FROM airports WHERE IATA='" + IATA + "'"))) {
+                    MySqlConnection.executeQuery("SELECT COUNT(*) FROM airports WHERE IATA='" + IATA + "'"))) {
                 throw new AirportDataException(
                         "There is an issue with result data, there should be exactly 1 result");
             }
-            
             StringBuffer selectSQL = new StringBuffer()
                     .append("SELECT * FROM airports WHERE IATA='" + IATA + "'");          
                    
             logger.debug(selectSQL);
-            ResultSet rs = statement.executeQuery(selectSQL.toString());
+            ResultSet rs = MySqlConnection.executeQuery(selectSQL.toString());
             rs.first();
             
             AirportDao result = new AirportDao(rs);
 
             resultsBufferByIATA.put(IATA, result);
             resultsBufferById.put(result.getAirportId(), result);
-            return result;
+            return result; 
         } catch (SQLException e) {
             logger.error(e.getMessage());
-            throw e;
-        } 
+        }
+        return null; 
     }
     
-    public static AirportDao select(int airportId) throws SQLException {
+    public static AirportDao select(int airportId){
         if(resultsBufferById.containsKey(airportId)) {
             return resultsBufferById.get(airportId);
-        }
-        try(Connection connection = MySqlConnection.getConnection();
-                Statement statement = connection.createStatement()){                             
+        }                            
+            
+        try {
             if (!isCountOne(
-                    statement.executeQuery("SELECT COUNT(*) FROM airports WHERE airportId='" + airportId + "'"))) {
+                    MySqlConnection.executeQuery("SELECT COUNT(*) FROM airports WHERE airportId='" + airportId + "'"))) {
                 throw new AirportDataException(
                         "There is an issue with result data, there should be exactly 1 result");
             }
-            
             StringBuffer selectSQL = new StringBuffer()
                     .append("SELECT * FROM airports WHERE airportId='" + airportId + "'");          
                    
             logger.debug(selectSQL);
-            ResultSet rs = statement.executeQuery(selectSQL.toString());
+            ResultSet rs = MySqlConnection.executeQuery(selectSQL.toString());
             rs.first();
             
             AirportDao result = new AirportDao(rs);
@@ -129,11 +120,10 @@ public class AirportDao extends AbstractDao {
             return result;
         } catch (SQLException e) {
             logger.error(e.getMessage());
-            throw e;
-        } 
+        }
+        return null;
     }
-    
-    
+     
     public String toString() {
         return new StringBuffer()
                 .append("[")

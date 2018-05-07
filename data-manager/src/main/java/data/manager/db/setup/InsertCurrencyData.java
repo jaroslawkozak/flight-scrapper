@@ -17,8 +17,7 @@ public class InsertCurrencyData {
     
     public static void main(String[] args) {
         logger.debug("Insertng currency data to database");
-        try(BufferedReader br = new BufferedReader(new FileReader(CURRENCY_DATA_FILE_PATH));
-                Connection connection = MySqlConnection.getConnection()){
+        try(BufferedReader br = new BufferedReader(new FileReader(CURRENCY_DATA_FILE_PATH))){
             String line = null;
             br.readLine(); //skip header line
             while((line = br.readLine()) != null ) {
@@ -27,7 +26,7 @@ public class InsertCurrencyData {
                         .setCurrencyId(Integer.parseInt(lineArr[2]))
                         .setCurrencyCode(lineArr[1])
                         .setCurrencyName(lineArr[0]);
-                currencyData.insert(connection);
+                currencyData.insert();
             }
         } catch (FileNotFoundException e) {
             logger.error("Currency data file not found!");
@@ -35,10 +34,6 @@ public class InsertCurrencyData {
         } catch (IOException e) {
             logger.error("There is an issue with currency data file!");
             e.printStackTrace();
-        } catch (SQLException sqlEx) {
-            logger.error(sqlEx.getMessage());
-        }
-
+        } 
     }
-
 }

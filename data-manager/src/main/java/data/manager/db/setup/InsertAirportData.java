@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -17,8 +18,7 @@ public class InsertAirportData {
     
     public static void main(String[] args) {
         logger.debug("Insertng airport data to database");
-        try(BufferedReader br = new BufferedReader(new FileReader(AIRPORTS_DATA_FILE_PATH));
-                Connection connection = MySqlConnection.getConnection()){
+        try(BufferedReader br = new BufferedReader(new FileReader(AIRPORTS_DATA_FILE_PATH))){
             String line = null;
             
             while((line = br.readLine()) != null ) {
@@ -35,7 +35,7 @@ public class InsertAirportData {
                         .setAltitude(parseInput(lineArr[8]))
                         .setTimezone(parseInput(lineArr[9]))
                         .setDST(parseInput(lineArr[10]));
-                airportData.insert(connection);
+                airportData.insert();
             }
         } catch (FileNotFoundException e) {
             logger.error("Airport data file not found!");
@@ -43,8 +43,6 @@ public class InsertAirportData {
         } catch (IOException e) {
             logger.error("There is an issue with airport data file!");
             e.printStackTrace();
-        } catch (SQLException sqlEx) {
-            logger.error(sqlEx.getMessage());
         }
     }
     private static String parseInput(String input) {

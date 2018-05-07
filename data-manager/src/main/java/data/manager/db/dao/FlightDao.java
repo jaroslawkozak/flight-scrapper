@@ -1,21 +1,16 @@
 package data.manager.db.dao;
 
-import data.manager.db.dao.exception.AirportDataException;
-import data.manager.db.dao.exception.FlightDataException;
 import data.manager.db.dao.exception.IncompleteFlightDataException;
 import data.manager.db.jdbc.MySqlConnection;
-import data.manager.dto.PriceDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.apache.log4j.Logger;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +18,7 @@ import java.util.List;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper=false)
 public class FlightDao extends AbstractDao{
+    private final static Logger logger = Logger.getLogger(FlightDao.class);
     private int flightId = -1;
     private String departureStationIATA;
     private String arrivalStationIATA;
@@ -57,7 +53,7 @@ public class FlightDao extends AbstractDao{
     }
     
     @Override
-    public void insert(Connection connection) throws SQLException {
+    public void insert() {
         if(this.flightId != -1) {
             logger.error("Cannot INSERT an object with valid flightId (" + this.flightId + "). Use UPDATE instead.");
             return;
@@ -78,18 +74,12 @@ public class FlightDao extends AbstractDao{
                         .append(",\"" + AirlineDao.select(this.airlineName).getAirlineId() + "\"")
                         .append(",\"" + nowDate + "\"")
                         .append(",\"" + nowDate + "\"")
-                        .append(")");        
-        try(Statement statement = connection.createStatement()){                 
-            logger.debug(insertTableSQL);
-            statement.executeUpdate(insertTableSQL.toString());
-            logger.debug("Record is inserted into table!");
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
+                        .append(")");                                   
+        executeUpdate(insertTableSQL);      
     }
     
     @Override
-    public void update(Connection connection) throws SQLException {
+    public void update(){
         if(this.flightId == -1) {
             logger.error("Cannot UPDATE an object without valid flightId (" + this.flightId + "). Use INSERT instead.");
             return;
@@ -107,27 +97,11 @@ public class FlightDao extends AbstractDao{
                         .append(", classOfService = \"" + this.classOfService + "\"")
                         .append(", hasMacFlight = \"" + this.hasMacFlight + "\"") 
                         .append(", updatedDate = \"" + nowDate + "\"")
-                        .append(" WHERE flightId='" + this.flightId + "'");        
-        try(Statement statement = connection.createStatement()){                 
-            logger.debug(insertTableSQL);
-            statement.executeUpdate(insertTableSQL.toString());
-            logger.debug("Record is updated in table!");
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
+                        .append(" WHERE flightId='" + this.flightId + "'");                       
+        executeUpdate(insertTableSQL);
     }
-    
-    public int isInDB() {
-        try(Connection connection = MySqlConnection.getConnection()){
-            return isInDB(connection);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return -1;
         
-    }
-    
-    public int isInDB(Connection connection) {
+    public int isInDB() {
         if(this.departureStationIATA == null) {
             throw new IncompleteFlightDataException("departureStation is missing, cannot check in database.");
         } else if(this.arrivalStationIATA == null){
@@ -137,38 +111,39 @@ public class FlightDao extends AbstractDao{
         } else if(this.airlineName == null) {
             throw new IncompleteFlightDataException("airline is missing, cannot check in database.");
         } 
-        FlightDao resultFlight = selectIfExist(connection);
+        FlightDao resultFlight = null;
+        try {
+            resultFlight = selectIfExist();
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return (resultFlight == null) ? -1 : resultFlight.getFlightId();
     }
     
-    private FlightDao selectIfExist(Connection connection) {
-        try(Statement statement = connection.createStatement()){                             
-            if (!isCountOne(
-                    statement.executeQuery("SELECT COUNT(*) "
-                            + "FROM flights "
-                            + "WHERE departureStationId='" + AirportDao.select(this.departureStationIATA).getAirportId() + "' "
-                            + "AND arrivalStationId='" + AirportDao.select(this.arrivalStationIATA).getAirportId() + "' "
-                            + "AND departureDate='" + this.departureDate + "'"
-                            + "AND airlineId='" + AirlineDao.select(this.airlineName).getAirlineId() + "'"))) {
-                return null;
-            } 
-            
-            StringBuffer selectSQL = new StringBuffer()
-                    .append("SELECT * "
-                            + "FROM flights "
-                            + "WHERE departureStationId='" + AirportDao.select(this.departureStationIATA).getAirportId() + "' "
-                            + "AND arrivalStationId='" + AirportDao.select(this.arrivalStationIATA).getAirportId() + "' "
-                            + "AND departureDate='" + this.departureDate + "'"
-                            + "AND airlineId='" + AirlineDao.select(this.airlineName).getAirlineId() + "'");          
-                   
-            logger.debug(selectSQL);
-            ResultSet rs = statement.executeQuery(selectSQL.toString());
-            rs.first();
-            return new FlightDao(rs);
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
+    private FlightDao selectIfExist() throws SQLException {
+        if (!isCountOne(
+                MySqlConnection.executeQuery("SELECT COUNT(*) "
+                        + "FROM flights "
+                        + "WHERE departureStationId='" + AirportDao.select(this.departureStationIATA).getAirportId() + "' "
+                        + "AND arrivalStationId='" + AirportDao.select(this.arrivalStationIATA).getAirportId() + "' "
+                        + "AND departureDate='" + this.departureDate + "'"
+                        + "AND airlineId='" + AirlineDao.select(this.airlineName).getAirlineId() + "'"))) {
             return null;
         } 
+        
+        StringBuffer selectSQL = new StringBuffer()
+                .append("SELECT * "
+                        + "FROM flights "
+                        + "WHERE departureStationId='" + AirportDao.select(this.departureStationIATA).getAirportId() + "' "
+                        + "AND arrivalStationId='" + AirportDao.select(this.arrivalStationIATA).getAirportId() + "' "
+                        + "AND departureDate='" + this.departureDate + "'"
+                        + "AND airlineId='" + AirlineDao.select(this.airlineName).getAirlineId() + "'");          
+               
+        logger.debug(selectSQL);
+        ResultSet rs = MySqlConnection.executeQuery(selectSQL.toString());
+        rs.first();
+        return new FlightDao(rs);
     }
     
     public List<String> convertStringToList(String stringArray) {

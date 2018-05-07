@@ -20,36 +20,34 @@ public class FlightHandler {
            
         ObjectMapper mapper = new ObjectMapper();
         
-        try(Connection connection = MySqlConnection.getConnection()){
-            flights.forEach(f -> {
-                try {
-                    System.out.println(mapper.writeValueAsString(f));
-                    
-                    FlightDao flight = new FlightDao()
-                            .setDepartureStationIATA(f.getDepartureStation())
-                            .setArrivalStationIATA(f.getArrivalStation())
-                            .setDepartureDate(f.getDepartureDate())
-                            .setAmount(Double.toString(f.getPrice().getAmount()))
-                            .setCurrencyCode(f.getPrice().getCurrencyCode())
-                            .setPriceType(f.getPriceType())
-                            .setDepartureDates(f.getDepartureDates())
-                            .setClassOfService(f.getClassOfService())
-                            .setHasMacFlight(f.isHasMacFlight())
-                            .setAirlineName(scrapperName);
 
-                    int flightId;
-                    if((flightId = flight.isInDB(connection)) == -1) {
-                        flight.insert(connection);
-                    } else {
-                        flight.setFlightId(flightId);
-                        flight.update(connection);
-                    }                       
-                } catch (IOException|SQLException e) {
-                    e.printStackTrace();
-                } 
-            });
-        } catch (SQLException sqlEx) {
-            sqlEx.printStackTrace();
-        }    
+        flights.forEach(f -> {
+            try {
+                System.out.println(mapper.writeValueAsString(f));
+                
+                FlightDao flight = new FlightDao()
+                        .setDepartureStationIATA(f.getDepartureStation())
+                        .setArrivalStationIATA(f.getArrivalStation())
+                        .setDepartureDate(f.getDepartureDate())
+                        .setAmount(Double.toString(f.getPrice().getAmount()))
+                        .setCurrencyCode(f.getPrice().getCurrencyCode())
+                        .setPriceType(f.getPriceType())
+                        .setDepartureDates(f.getDepartureDates())
+                        .setClassOfService(f.getClassOfService())
+                        .setHasMacFlight(f.isHasMacFlight())
+                        .setAirlineName(scrapperName);
+
+                int flightId;
+                if((flightId = flight.isInDB()) == -1) {
+                    flight.insert();
+                } else {
+                    flight.setFlightId(flightId);
+                    flight.update();
+                }                       
+            } catch (IOException e) {
+                e.printStackTrace();
+            } 
+        });
+ 
     }
 }

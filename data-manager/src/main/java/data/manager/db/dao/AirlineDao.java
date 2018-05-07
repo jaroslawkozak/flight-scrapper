@@ -1,16 +1,14 @@
 package data.manager.db.dao;
 
-import data.manager.db.dao.exception.AirportDataException;
 import data.manager.db.dao.exception.CurrencyDataException;
 import data.manager.db.jdbc.MySqlConnection;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.apache.log4j.Logger;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +16,7 @@ import java.util.Map;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
 public class AirlineDao extends AbstractDao {
+    private final static Logger logger = Logger.getLogger(AirlineDao.class);
     private int airlineId;
     private String airlineName;
     private static Map<Integer, AirlineDao> resultsBufferById = new HashMap<Integer,AirlineDao>();
@@ -31,30 +30,23 @@ public class AirlineDao extends AbstractDao {
     }
     
     @Override
-    public void insert(Connection connection) {
+    public void insert() {
         StringBuffer insertTableSQL = new StringBuffer()
                 .append("INSERT INTO airlines (airlineId, airlineName) VALUES ")
                 .append("(" + this.airlineId)
                 .append(",\"" + this.airlineName + "\"")
-                .append(")");        
-        try(Statement statement = connection.createStatement()){                 
-            logger.debug(insertTableSQL);
-            statement.executeUpdate(insertTableSQL.toString());
-            logger.debug("Record is inserted into table!");
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
+                .append(")");                  
+        executeUpdate(insertTableSQL);   
     }
 
-    public static AirlineDao select(String airlineName) throws SQLException {
+    public static AirlineDao select(String airlineName) {
         if(resultsBufferByName.containsKey(airlineName)) {
             return resultsBufferByName.get(airlineName);
         }
-        try (Connection connection = MySqlConnection.getConnection();
-                Statement statement = connection.createStatement()) {
 
+        try {
             if (!isCountOne(
-                    statement.executeQuery("SELECT COUNT(*) FROM airlines WHERE airlineName='"
+                    MySqlConnection.executeQuery("SELECT COUNT(*) FROM airlines WHERE airlineName='"
                             + airlineName + "'"))) {
                 throw new CurrencyDataException(
                         "There is an issue with result data, there should be exactly 1 result");
@@ -64,7 +56,7 @@ public class AirlineDao extends AbstractDao {
                     "SELECT * FROM airlines WHERE airlineName='" + airlineName + "'");
 
             logger.debug(selectSQL);
-            ResultSet rs = statement.executeQuery(selectSQL.toString());
+            ResultSet rs = MySqlConnection.executeQuery(selectSQL.toString());
             rs.first();
             AirlineDao result = new AirlineDao(rs);
             resultsBufferByName.put(airlineName, result);
@@ -72,19 +64,18 @@ public class AirlineDao extends AbstractDao {
             return result;
         } catch (SQLException e) {
             logger.error(e.getMessage());
-            throw e;
         }
+        return null;
     }
     
-    public static AirlineDao select(int airlineId) throws SQLException {
+    public static AirlineDao select(int airlineId){
         if(resultsBufferById.containsKey(airlineId)) {
             return resultsBufferById.get(airlineId);
         }
-        try (Connection connection = MySqlConnection.getConnection();
-                Statement statement = connection.createStatement()) {
-
+   
+        try {
             if (!isCountOne(
-                    statement.executeQuery("SELECT COUNT(*) FROM airlines WHERE airlineId='"
+                    MySqlConnection.executeQuery("SELECT COUNT(*) FROM airlines WHERE airlineId='"
                             + airlineId + "'"))) {
                 throw new CurrencyDataException(
                         "There is an issue with result data, there should be exactly 1 result");
@@ -94,15 +85,15 @@ public class AirlineDao extends AbstractDao {
                     "SELECT * FROM airlines WHERE airlineId='" + airlineId + "'");
 
             logger.debug(selectSQL);
-            ResultSet rs = statement.executeQuery(selectSQL.toString());
+            ResultSet rs = MySqlConnection.executeQuery(selectSQL.toString());
             rs.first();
             AirlineDao result = new AirlineDao(rs);
             resultsBufferByName.put(result.getAirlineName(), result);
             resultsBufferById.put(airlineId, result);
-            return result;
+            return result;   
         } catch (SQLException e) {
             logger.error(e.getMessage());
-            throw e;
         }
+        return null;
     }
 }

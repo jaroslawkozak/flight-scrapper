@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `airlines` (
   `airlineId` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `airlineName` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`airlineId`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
 -- Zrzut struktury tabela flight-scrapper.airports
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `airports` (
   `timezone` double DEFAULT NULL COMMENT 'Hours offset from UTC. Fractional hours are expressed as decimals, eg. India is 5.5.',
   `DST` varchar(4) DEFAULT NULL COMMENT 'Daylight savings time. One of E (Europe), A (US/Canada), S (South America), O (Australia), Z (New Zealand), N (None) or U (Unknown).',
   PRIMARY KEY (`airportId`)
-) ENGINE=InnoDB AUTO_INCREMENT=12058 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=12058 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 -- Zrzut struktury tabela flight-scrapper.currencyCodes
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `currencyCodes` (
   `currencyCode` varchar(50) DEFAULT NULL,
   `currencyName` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`currencyId`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
 -- Zrzut struktury tabela flight-scrapper.flights
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `flights` (
   CONSTRAINT `FK_flights_currencyCodes` FOREIGN KEY (`currencyId`) REFERENCES `currencyCodes` (`currencyId`) ON DELETE NO ACTION,
   CONSTRAINT `FK_flights_station_arr` FOREIGN KEY (`arrivalStationId`) REFERENCES `airports` (`airportId`) ON DELETE NO ACTION,
   CONSTRAINT `FK_flights_station_dep` FOREIGN KEY (`departureStationId`) REFERENCES `airports` (`airportId`) ON DELETE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
 -- Zrzut struktury tabela flight-scrapper.jobs
