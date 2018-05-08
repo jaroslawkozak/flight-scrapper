@@ -1,32 +1,17 @@
 package data.manager.config;
 
-import lombok.Getter;
-
-import org.apache.log4j.Logger;
-import org.flywaydb.core.Flyway;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.EventListener;
-
-import data.manager.db.dao.AirlineDao;
-import data.manager.db.dao.exception.CurrencyDataException;
-import data.manager.db.jdbc.MySqlConnection;
-import data.manager.db.setup.InsertAirlineData;
-import data.manager.db.setup.InsertAirportData;
-import data.manager.db.setup.InsertCurrencyData;
-
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Properties;
+
+import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Configuration;
+
+import data.manager.db.setup.InsertAirlineData;
+import data.manager.db.setup.InsertAirportData;
+import data.manager.db.setup.InsertCurrencyData;
+import lombok.Getter;
 
 @Configuration
 public class MysqlConfiguration {
