@@ -75,7 +75,7 @@ public class AirportDao extends AbstractDao {
             if (!isCountOne(
                     MySqlConnection.executeQuery("SELECT COUNT(*) FROM airports WHERE IATA='" + IATA + "'"))) {
                 throw new AirportDataException(
-                        "There is an issue with result data, there should be exactly 1 result");
+                        "There is an issue with result data, there should be exactly 1 result (IATA='" + IATA + "')");
             }
             StringBuffer selectSQL = new StringBuffer()
                     .append("SELECT * FROM airports WHERE IATA='" + IATA + "'");          
