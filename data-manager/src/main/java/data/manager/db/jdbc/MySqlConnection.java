@@ -81,6 +81,27 @@ public class MySqlConnection {
         return MySqlConnection.CONNECTION;
     }
 
+	public static String getDBParam(String parameterName) {
+		try {
+			ResultSet rs = MySqlConnection.executeQuery("SELECT parameterValue FROM params WHERE parameterName=\"" + parameterName + "\"");
+			rs.first();
+			return rs.getString("parameterValue");
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+			return null;
+		}
+	}
+   
+	public static void setDBParam(String parameterName, String parameterValue) {
+		try {
+			MySqlConnection.executeUpdate("INSERT INTO params (parameterName, parameterValue) "
+					+ "VALUES(\"" + parameterName + "\" , \"" + parameterValue + "\") "
+					+ "ON DUPLICATE KEY UPDATE parameterName=\"" + parameterName + "\", parameterValue=\"" + parameterValue + "\"");
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+		}   
+	}
+    
     private static void resetTimer() {
         connKiller.resetTimer();        
     }

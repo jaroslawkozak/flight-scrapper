@@ -37,7 +37,7 @@ public class DataManagerController {
     
     @PostMapping(value = "/recordedFlights")
     public ResponseEntity<?> putFlights(@RequestBody TimetableScrapDto timetable, @RequestParam("scrapperName") String scrapperName) {
-        new Thread(new FlightHandler(timetable, scrapperName)).run();
+    	new Thread(new FlightHandler(timetable, scrapperName)).run();
         return new ResponseEntity<Object>(HttpStatus.ACCEPTED);
     }
     

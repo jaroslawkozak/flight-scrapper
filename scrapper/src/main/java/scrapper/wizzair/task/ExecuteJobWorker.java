@@ -1,18 +1,18 @@
 package scrapper.wizzair.task;
 
-import io.restassured.RestAssured;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+
+import io.restassured.RestAssured;
+import lombok.AllArgsConstructor;
 import scrapper.config.ScrapperConfiguration;
-import scrapper.utils.DateUtils;
 import scrapper.wizzair.WizzairScrapperApplication;
 import scrapper.wizzair.datamanager.dto.JobDto;
 import scrapper.wizzair.datamanager.dto.JobReportDto;
@@ -20,10 +20,6 @@ import scrapper.wizzair.datamanager.enums.JobStatus;
 import scrapper.wizzair.dto.RequestDto;
 import scrapper.wizzair.dto.RequestFlightDto;
 import scrapper.wizzair.dto.TimetableResponseDto;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @AllArgsConstructor
 public class ExecuteJobWorker implements Runnable{
@@ -106,8 +102,8 @@ public class ExecuteJobWorker implements Runnable{
                 .setFrom(from)
                 .setTo(to));
         requestFlights.add(new RequestFlightDto()
-                .setDepartureStation(job.getDepartureStationIATA())
-                .setArrivalStation(job.getArrivalStationIATA())
+                .setDepartureStation(job.getArrivalStationIATA())
+                .setArrivalStation(job.getDepartureStationIATA())
                 .setFrom(from)
                 .setTo(to));
         return requestFlights;

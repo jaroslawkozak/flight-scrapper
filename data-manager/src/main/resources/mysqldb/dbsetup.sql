@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS `params` (
 -- Zrzucanie danych dla tabeli flight-scrapper.params: ~0 rows (około)
 /*!40000 ALTER TABLE `params` DISABLE KEYS */;
 INSERT INTO `params` (`parameter⁯Id`, `parameterName`, `parameterValue`) VALUES
-	(1, 'firstRun', 'false');
+	(1, 'firstRun', 'true');
 /*!40000 ALTER TABLE `params` ENABLE KEYS */;
 
 -- Data exporting was unselected.

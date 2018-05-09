@@ -1,43 +1,43 @@
 package scrapper.wizzair.task;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
-import scrapper.wizzair.datamanager.dto.JobDto;
-
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@RequiredArgsConstructor
+import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import scrapper.wizzair.WizzairScrapperApplication;
+import scrapper.wizzair.datamanager.dto.JobDto;
+
+@Component
+@EnableScheduling
 public class ExecuteJobsTask extends TimerTask {
     private final static Logger logger = Logger.getLogger(ExecuteJobsTask.class);
     
-    @NonNull
-    @SuppressWarnings("unused")
-    private List<JobDto> jobs;
+    private List<JobDto> jobs = WizzairScrapperApplication.jobs;
     
     @Override
+    @Scheduled(fixedDelay = 600000, initialDelay = 10000)
     public void run() { 
         logger.debug("Running all jobs. Jobs found: " + jobs.size());
     	for(JobDto job : jobs) {   
     	    if(job.getIsActive() == 0) { continue;}
     	    final int THREAD_POOL = 12;
     	    
-    	    for(int i = 0; i < THREAD_POOL ; i++) {
+    	    /*for(int i = 0; i < THREAD_POOL ; i++) {
     	        String from = getFirstDayOfMonthDate(i);
                 String to = getLastDayOfMonthDate(i);
     	        new ExecuteJobWorker(job, from, to).run();
-    	    }
+    	    }*/
     	    
     	    
-/*    	    ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL);
+    	    ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL);
    	    
     	    for(int i = 0; i < THREAD_POOL ; i++) {
     	        String from = getFirstDayOfMonthDate(i);
@@ -46,7 +46,7 @@ public class ExecuteJobsTask extends TimerTask {
     	        executor.execute(new ExecuteJobWorker(job, from, to));
     	    }
     	    executor.shutdown();
-            while (!executor.isTerminated()) {}*/
+            while (!executor.isTerminated()) {}
     	}
     }
 

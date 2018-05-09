@@ -1,29 +1,31 @@
 package scrapper.wizzair.task;
 
-import io.restassured.RestAssured;
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
-import scrapper.config.ScrapperConfiguration;
-import scrapper.wizzair.datamanager.dto.JobDto;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.TimerTask;
 
-@RequiredArgsConstructor
+import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import io.restassured.RestAssured;
+import scrapper.config.ScrapperConfiguration;
+import scrapper.wizzair.WizzairScrapperApplication;
+import scrapper.wizzair.datamanager.dto.JobDto;
+
+@Component
+@EnableScheduling
 public class UpdateJobsTask extends TimerTask{
     private final static Logger logger = Logger.getLogger(UpdateJobsTask.class);
     private static final String JOB_REQUEST = "http://" + ScrapperConfiguration.getDataManagerHost() + ":" + ScrapperConfiguration.getDataManagerPort() + "/getJobs";
     
-    @NonNull
-    @SuppressWarnings("unused")
-    private List<JobDto> jobs;
+    private List<JobDto> jobs = WizzairScrapperApplication.jobs;
     
     @Override
+    @Scheduled(fixedDelay = 600000, initialDelay = 0)
     public void run() {       
         try {
             jobs.clear();
