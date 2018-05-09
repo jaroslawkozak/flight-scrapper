@@ -15,9 +15,9 @@ public abstract class AbstractDao {
     
     protected void executeUpdate(StringBuffer query) {
         try {
-            logger.debug(query);
+            logger.trace(query);
             MySqlConnection.executeUpdate(query.toString());
-            logger.debug("Record is inserted into table!");
+            logger.trace("Record is updated in table!");
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
@@ -28,7 +28,7 @@ public abstract class AbstractDao {
         try {
             rs.first();
             if((count = rs.getInt(1)) != 1) {
-                logger.debug("Count found: " + count);
+                logger.trace("Count found: " + count);
                 return false;
             }
         } catch (SQLException e) {

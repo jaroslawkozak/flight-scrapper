@@ -19,7 +19,7 @@ USE `flight-scrapper`;
 -- Zrzut struktury tabela flight-scrapper.airlines
 CREATE TABLE IF NOT EXISTS `airlines` (
   `airlineId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `airlineName` varchar(50) DEFAULT NULL,
+  `airlineName` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`airlineId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS `airports` (
 -- Zrzut struktury tabela flight-scrapper.currencyCodes
 CREATE TABLE IF NOT EXISTS `currencyCodes` (
   `currencyId` int(10) unsigned NOT NULL,
-  `currencyCode` varchar(50) DEFAULT NULL,
-  `currencyName` varchar(100) DEFAULT NULL,
+  `currencyCode` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `currencyName` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`currencyId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -58,10 +58,10 @@ CREATE TABLE IF NOT EXISTS `flights` (
   `departureDate` datetime NOT NULL,
   `amount` double unsigned NOT NULL,
   `currencyId` int(10) unsigned NOT NULL,
-  `priceType` varchar(50) NOT NULL,
-  `departureDates` varchar(200) NOT NULL,
-  `classOfService` varchar(50) DEFAULT NULL,
-  `hasMacFlight` varchar(5) DEFAULT NULL,
+  `priceType` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `departureDates` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+  `classOfService` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `hasMacFlight` varchar(5) COLLATE utf8_unicode_ci DEFAULT NULL,
   `airlineId` int(10) unsigned DEFAULT NULL,
   `createdDate` datetime NOT NULL,
   `updatedDate` datetime NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `flights` (
   CONSTRAINT `FK_flights_currencyCodes` FOREIGN KEY (`currencyId`) REFERENCES `currencyCodes` (`currencyId`) ON DELETE NO ACTION,
   CONSTRAINT `FK_flights_station_arr` FOREIGN KEY (`arrivalStationId`) REFERENCES `airports` (`airportId`) ON DELETE NO ACTION,
   CONSTRAINT `FK_flights_station_dep` FOREIGN KEY (`departureStationId`) REFERENCES `airports` (`airportId`) ON DELETE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
 -- Zrzut struktury tabela flight-scrapper.jobs
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `jobs` (
   `jobId` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `departureStationId` int(10) unsigned NOT NULL,
   `arrivalStationId` int(10) unsigned NOT NULL,
-  `status` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `status` varchar(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'new',
   `lastSuccessfull` datetime DEFAULT NULL,
   `lastFailed` datetime DEFAULT NULL,
   `totalSuccess` int(10) unsigned NOT NULL DEFAULT '0',
@@ -94,7 +94,22 @@ CREATE TABLE IF NOT EXISTS `jobs` (
   KEY `FK_jobs_airports_2` (`arrivalStationId`),
   CONSTRAINT `FK_jobs_airports` FOREIGN KEY (`departureStationId`) REFERENCES `airports` (`airportId`) ON DELETE NO ACTION,
   CONSTRAINT `FK_jobs_airports_2` FOREIGN KEY (`arrivalStationId`) REFERENCES `airports` (`airportId`) ON DELETE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- Zrzut struktury tabela flight-scrapper.params
+CREATE TABLE IF NOT EXISTS `params` (
+  `parameter⁯Id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `parameterName` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
+  `parameterValue` varchar(100) COLLATE utf8_unicode_ci DEFAULT '0',
+  PRIMARY KEY (`parameter⁯Id`),
+  UNIQUE KEY `parameterName` (`parameterName`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- Zrzucanie danych dla tabeli flight-scrapper.params: ~0 rows (około)
+/*!40000 ALTER TABLE `params` DISABLE KEYS */;
+INSERT INTO `params` (`parameter⁯Id`, `parameterName`, `parameterValue`) VALUES
+	(1, 'firstRun', 'false');
+/*!40000 ALTER TABLE `params` ENABLE KEYS */;
 
 -- Data exporting was unselected.
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

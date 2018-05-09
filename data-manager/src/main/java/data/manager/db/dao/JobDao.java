@@ -90,14 +90,14 @@ public class JobDao extends AbstractDao {
                 .append("UPDATE jobs SET ");
         switch(status) {
             case SUCCESS:
-                updateQuery.append("status=ok");
+                updateQuery.append("status=\"ok\"");
                 updateQuery.append(", lastSuccessfull=\"" + nowDate + "\"");
                 updateQuery.append(", totalSuccess = totalSuccess + 1");
                 updateQuery.append(", failedInRow = 0");
                 break;
             case FAILED:
                 updateQuery.append("status=\"failing\"");
-                updateQuery.append(", lastFailed=" + nowDate);
+                updateQuery.append(", lastFailed=\"" + nowDate +"\"");
                 updateQuery.append(", totalFailed = totalFailed + 1");
                 updateQuery.append(", failedInRow = failedInRow + 1");
                 break;
@@ -110,7 +110,12 @@ public class JobDao extends AbstractDao {
                 return;             
         }
         updateQuery.append(" WHERE jobId=" + this.jobId);
-        
+        try {
+            logger.trace(updateQuery.toString());
+            MySqlConnection.executeUpdate(updateQuery.toString());
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
     }
     
     public static JobDao select(int jobId){

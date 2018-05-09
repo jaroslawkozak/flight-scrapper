@@ -26,7 +26,8 @@ public class UpdateJobsTask extends TimerTask{
     @Override
     public void run() {       
         try {
-            jobs = new ObjectMapper().readValue(RestAssured.when().get(JOB_REQUEST).body().asString().toString(), new TypeReference<List<JobDto>>(){});         
+            jobs.clear();
+            jobs.addAll(new ObjectMapper().readValue(RestAssured.when().get(JOB_REQUEST).body().asString().toString(), new TypeReference<List<JobDto>>(){})); 
         } catch (IOException e) {
             logger.error(e.getMessage());
         } 

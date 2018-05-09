@@ -1,5 +1,6 @@
 package data.manager;
 
+import data.manager.controller.DataManagerController;
 import org.apache.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

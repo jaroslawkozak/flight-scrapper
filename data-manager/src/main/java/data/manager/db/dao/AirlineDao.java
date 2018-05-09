@@ -55,7 +55,7 @@ public class AirlineDao extends AbstractDao {
             StringBuffer selectSQL = new StringBuffer().append(
                     "SELECT * FROM airlines WHERE airlineName='" + airlineName + "'");
 
-            logger.debug(selectSQL);
+            logger.trace(selectSQL);
             ResultSet rs = MySqlConnection.executeQuery(selectSQL.toString());
             rs.first();
             AirlineDao result = new AirlineDao(rs);
@@ -84,7 +84,7 @@ public class AirlineDao extends AbstractDao {
             StringBuffer selectSQL = new StringBuffer().append(
                     "SELECT * FROM airlines WHERE airlineId='" + airlineId + "'");
 
-            logger.debug(selectSQL);
+            logger.trace(selectSQL);
             ResultSet rs = MySqlConnection.executeQuery(selectSQL.toString());
             rs.first();
             AirlineDao result = new AirlineDao(rs);

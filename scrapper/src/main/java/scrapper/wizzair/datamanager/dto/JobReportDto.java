@@ -1,8 +1,8 @@
-package data.manager.dto;
+package scrapper.wizzair.datamanager.dto;
 
-import data.manager.enums.JobStatus;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import scrapper.wizzair.datamanager.enums.JobStatus;
 
 @Data
 @Accessors(chain = true)

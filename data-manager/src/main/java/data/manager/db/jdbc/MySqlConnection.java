@@ -19,13 +19,15 @@ public class MySqlConnection {
     private static Connection CONNECTION;
     private static ConnectionKiller connKiller;
     
-    public static ResultSet executeQuery(String query) throws SQLException {
+    public static ResultSet executeQuery(String query) throws SQLException {       
         Statement statement = getConnection().createStatement();
+        resetTimer();
         return statement.executeQuery(query);
     }
     
-    public static int executeUpdate(String query) throws SQLException {
+    public static int executeUpdate(String query) throws SQLException {  
         try (Statement statement = getConnection().createStatement()){
+            resetTimer();
             return statement.executeUpdate(query);
         } catch (SQLException e) {
             throw e;
@@ -69,9 +71,12 @@ public class MySqlConnection {
         } else {
             logger.error("Failed to make connection!");
         }
-        connKiller = new ConnectionKiller(MySqlConnection.CONNECTION, 60000);
+        connKiller = new ConnectionKiller(MySqlConnection.CONNECTION, 5*60*1000);
         Thread thread = new Thread(connKiller);
         thread.start();
+        try {
+            Thread.sleep(100); //Just giving time to connection killer to start, exception is irrelevant.
+        } catch (InterruptedException e) {}
         
         return MySqlConnection.CONNECTION;
     }

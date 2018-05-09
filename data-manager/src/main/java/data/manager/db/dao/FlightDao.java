@@ -140,7 +140,7 @@ public class FlightDao extends AbstractDao{
                         + "AND departureDate='" + this.departureDate + "'"
                         + "AND airlineId='" + AirlineDao.select(this.airlineName).getAirlineId() + "'");          
                
-        logger.debug(selectSQL);
+        logger.trace(selectSQL);
         ResultSet rs = MySqlConnection.executeQuery(selectSQL.toString());
         rs.first();
         return new FlightDao(rs);

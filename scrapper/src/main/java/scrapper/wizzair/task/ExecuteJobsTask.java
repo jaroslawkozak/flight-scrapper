@@ -3,91 +3,76 @@ package scrapper.wizzair.task;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
-
-import io.restassured.RestAssured;
-import scrapper.config.ScrapperConfiguration;
+import org.joda.time.DateTime;
 import scrapper.wizzair.datamanager.dto.JobDto;
-import scrapper.wizzair.dto.RequestDto;
-import scrapper.wizzair.dto.RequestFlightDto;
-import scrapper.wizzair.dto.TimetableResponseDto;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @RequiredArgsConstructor
 public class ExecuteJobsTask extends TimerTask {
-    private final static Logger logger = Logger.getLogger(UpdateJobsTask.class);
-    private static final String JOB_REQUEST = "http://" + ScrapperConfiguration.getDataManagerHost() + ":" + ScrapperConfiguration.getDataManagerPort() + "/getJobs";
-    private static final String SCRAP_API_VERSION = "7.12.0";
-    private static final String SCRAP_REQUEST = "https://be.wizzair.com/" + SCRAP_API_VERSION + "/Api/search/timetable";
+    private final static Logger logger = Logger.getLogger(ExecuteJobsTask.class);
     
     @NonNull
     @SuppressWarnings("unused")
     private List<JobDto> jobs;
     
     @Override
-    public void run() {
-    	ObjectMapper mapper = new ObjectMapper();
-    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    	String nowDate = sdf.format(new DateTime());
-    	for(JobDto job : jobs) {
-            
-            
-    		
-    	       List<RequestFlightDto> requestFlights = new ArrayList<RequestFlightDto>();
-    	        requestFlights.add(new RequestFlightDto()
-    	                .setDepartureStation(job.getDepartureStationIATA())
-    	                .setArrivalStation(job.getArrivalStationIATA())
-    	                .setFrom("2018-07-01")
-    	                .setTo("2018-07-30"));
-    	        requestFlights.add(new RequestFlightDto()
-    	                .setDepartureStation("LCA")
-    	                .setArrivalStation("KTW")
-    	                .setFrom("2018-07-01")
-    	                .setTo("2018-07-30"));
-    	         
-    	        RequestDto request = new RequestDto()
-    	                .setFlightList(requestFlights)
-    	                .setPriceType("wdc")
-    	                .setAdultCount(1)
-    	                .setChildCount(0)
-    	                .setInfantCount(0);
-    	        
-    	        String response = RestAssured.given()
-    	                .contentType("application/json")
-    	                .body(mapper.writeValueAsString(request))
-    	                .when()
-    	                .post("https://be.wizzair.com/7.12.0/Api/search/timetable")
-    	                .asString()
-    	                .toString();
+    public void run() { 
+        logger.debug("Running all jobs. Jobs found: " + jobs.size());
+    	for(JobDto job : jobs) {   
+    	    if(job.getIsActive() == 0) { continue;}
+    	    final int THREAD_POOL = 12;
+    	    
+    	    for(int i = 0; i < THREAD_POOL ; i++) {
+    	        String from = getFirstDayOfMonthDate(i);
+                String to = getLastDayOfMonthDate(i);
+    	        new ExecuteJobWorker(job, from, to).run();
+    	    }
+    	    
+    	    
+/*    	    ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL);
+   	    
+    	    for(int i = 0; i < THREAD_POOL ; i++) {
+    	        String from = getFirstDayOfMonthDate(i);
+    	        String to = getLastDayOfMonthDate(i);
+    	        logger.debug("Starting sub-jobs with dates from: " + from + " to: " + to);
+    	        executor.execute(new ExecuteJobWorker(job, from, to));
+    	    }
+    	    executor.shutdown();
+            while (!executor.isTerminated()) {}*/
     	}
-    	
-    	
- 
-        
-        
-        TimetableResponseDto responseDto = mapper.readValue(response, TimetableResponseDto.class);
-        
-        RestAssured.given()
-                .contentType("application/json")
-                .body(response)
-                .when()
-                .post("http://localhost:7701/recordedFlights?scrapperName=Wizzair")
-                .then()
-                .assertThat()
-                .statusCode(200);  
-        //collection.replaceOne()
- 
-        //collection.insertMany(documents);
-        
-        
-        //collection.
-        System.out.println(responseDto);
-        
     }
 
+    private String getFirstDayOfMonthDate(int plusMonths) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        DateTime workingDate = DateTime.now();
+        if(plusMonths < 0) {
+            logger.error("Incorrect plusMonths value: " + plusMonths);
+            return null;
+        }
+        
+        if(plusMonths == 0) {
+            return sdf.format(workingDate.toDate());
+        } else {
+            return sdf.format(workingDate.plusMonths(plusMonths).withDayOfMonth(1).toDate());
+        }
+    }
+    
+    private String getLastDayOfMonthDate(int plusMonths) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        DateTime workingDate = DateTime.now();
+        if(plusMonths < 0) {
+            logger.error("Incorrect plusMonths value: " + plusMonths);
+            return null;
+        }
+        workingDate = workingDate.plusMonths(plusMonths);
+        return sdf.format(workingDate.dayOfMonth().withMaximumValue().toDate());   
+    }
 }

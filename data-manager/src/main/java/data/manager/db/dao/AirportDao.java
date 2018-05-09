@@ -80,7 +80,7 @@ public class AirportDao extends AbstractDao {
             StringBuffer selectSQL = new StringBuffer()
                     .append("SELECT * FROM airports WHERE IATA='" + IATA + "'");          
                    
-            logger.debug(selectSQL);
+            logger.trace(selectSQL);
             ResultSet rs = MySqlConnection.executeQuery(selectSQL.toString());
             rs.first();
             
@@ -109,7 +109,7 @@ public class AirportDao extends AbstractDao {
             StringBuffer selectSQL = new StringBuffer()
                     .append("SELECT * FROM airports WHERE airportId='" + airportId + "'");          
                    
-            logger.debug(selectSQL);
+            logger.trace(selectSQL);
             ResultSet rs = MySqlConnection.executeQuery(selectSQL.toString());
             rs.first();
             

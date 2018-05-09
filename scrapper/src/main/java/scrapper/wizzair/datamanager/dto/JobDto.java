@@ -1,8 +1,10 @@
 package scrapper.wizzair.datamanager.dto;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 @Data
+@Accessors(chain = true)
 public class JobDto {
     private int jobId;
     private String departureStationIATA;

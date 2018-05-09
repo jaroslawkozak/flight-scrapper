@@ -26,7 +26,7 @@ public class ConnectionKiller implements Runnable {
     
     @Override
     public void run() {
-        logger.error("Starting sql connection monitor.");
+        logger.info("Starting sql connection monitor.");
         this.running = true;
         while(this.elapsed.get() < this.timeoutMilis) {
             try {
@@ -50,7 +50,7 @@ public class ConnectionKiller implements Runnable {
             e.printStackTrace();
         }
         this.running = false;
-        logger.error("Stopping sql connection monitor. Connections closed.");
+        logger.info("Stopping sql connection monitor due to timeout. Connections closed.");
     }
    
     public void resetTimer() {

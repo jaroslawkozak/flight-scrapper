@@ -48,7 +48,7 @@ public class CurrencyCodeDao extends AbstractDao {
             StringBuffer selectSQL = new StringBuffer().append(
                     "SELECT * FROM currencyCodes WHERE currencyCode='" + currencyCode + "'");
 
-            logger.debug(selectSQL);
+            logger.trace(selectSQL);
             ResultSet rs = MySqlConnection.executeQuery(selectSQL.toString());
             rs.first();
             CurrencyCodeDao result = new CurrencyCodeDao().setCurrencyId(rs.getInt(1))

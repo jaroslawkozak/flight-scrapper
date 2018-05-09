@@ -1,4 +1,4 @@
-package data.manager;
+package data.manager.controller;
 
 import data.manager.db.dao.JobDao;
 import data.manager.dto.JobReportDto;
