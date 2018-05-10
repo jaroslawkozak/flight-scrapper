@@ -1,0 +1,8 @@
+FROM openjdk:8-jre
+
+ADD target/data-manager-0.0.1-SNAPSHOT.jar /app/
+ADD src/main/resources/ /src/main/resources/
+
+CMD java -jar /app/data-manager-0.0.1-SNAPSHOT.jar
+
+EXPOSE 7701

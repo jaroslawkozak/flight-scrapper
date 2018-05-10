@@ -1,6 +1,5 @@
 package data.manager.db.setup;
 
-import data.manager.db.jdbc.MySqlConnection;
 import data.manager.model.dao.AirportDao;
 import org.apache.log4j.Logger;
 
@@ -8,15 +7,13 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.SQLException;
 
-public class InsertAirportData {
+public class InsertAirportData implements Runnable {
     private final static Logger logger = Logger.getLogger(InsertAirportData.class);
     private final static String AIRPORTS_DATA_FILE_PATH = "src/main/resources/airportData/airports.dat";
     
-    public static void main(String[] args) {
+    @Override
+    public void run() {
         logger.debug("Insertng airport data to database");
         try(BufferedReader br = new BufferedReader(new FileReader(AIRPORTS_DATA_FILE_PATH))){
             String line = null;

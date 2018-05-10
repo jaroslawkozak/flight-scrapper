@@ -1,6 +1,5 @@
 package data.manager.db.setup;
 
-import data.manager.db.jdbc.MySqlConnection;
 import data.manager.model.dao.CurrencyCodeDao;
 import org.apache.log4j.Logger;
 
@@ -8,14 +7,13 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 
-public class InsertCurrencyData {
+public class InsertCurrencyData implements Runnable{
     private final static Logger logger = Logger.getLogger(InsertCurrencyData.class);
     private final static String CURRENCY_DATA_FILE_PATH = "src/main/resources/currencyData/currencies.dat";
     
-    public static void main(String[] args) {
+    @Override
+    public void run() {
         logger.debug("Insertng currency data to database");
         try(BufferedReader br = new BufferedReader(new FileReader(CURRENCY_DATA_FILE_PATH))){
             String line = null;
