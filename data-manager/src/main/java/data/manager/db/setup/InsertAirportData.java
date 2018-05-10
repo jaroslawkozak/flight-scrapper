@@ -1,7 +1,7 @@
 package data.manager.db.setup;
 
-import data.manager.db.dao.AirportDao;
 import data.manager.db.jdbc.MySqlConnection;
+import data.manager.model.dao.AirportDao;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;

@@ -42,7 +42,7 @@ public class ExecuteJobWorker implements Runnable{
         try {
             response = makeRequestAndGetResponseString(request);
         } catch (IOException e) {              
-            logger.error("Job failed: " + e.getMessage());
+            logger.error("Job " + job.getJobId() + " failed: " + e.getMessage());
             sendJobReport(job, JobStatus.FAILED);
             return;
         } 
@@ -51,13 +51,13 @@ public class ExecuteJobWorker implements Runnable{
             validateResponseContent(response);
             sendFlightRecordRequest(response);             
         } catch (IOException e) {             
-            logger.error("Job failed: " + e.getMessage());
+            logger.error("Job " + job.getJobId() + " failed: " + e.getMessage());
             logger.error("Response: " + response); 
             sendJobReport(job, JobStatus.FAILED);
             return;
         }
         sendJobReport(job, JobStatus.SUCCESS);                   
-        logger.debug("Job successfull");
+        logger.debug("Job " + job.getJobId() + " successfull");
         
     }
     
@@ -67,7 +67,6 @@ public class ExecuteJobWorker implements Runnable{
     }
 
     private void sendFlightRecordRequest(String response) {
-        logger.debug("Sending flight records");  
         try {   
             RestAssured.given()
                 .contentType("application/json")
@@ -79,8 +78,7 @@ public class ExecuteJobWorker implements Runnable{
                 .statusCode(202);
             logger.debug("Sending flight records successfull");
         } catch (AssertionError e) {
-            logger.error("Sending flight records failed");
-            logger.error("Failed response: " + response);
+            logger.error("Sending flight records failed. Failed response: " + response);
             logger.error(e.getMessage());
         }
     }
@@ -121,8 +119,7 @@ public class ExecuteJobWorker implements Runnable{
                 .toString();
     }
     
-    private void sendJobReport(JobDto job, JobStatus status) {
-        logger.debug("Sending job report");      
+    private void sendJobReport(JobDto job, JobStatus status) {     
         try {
             RestAssured.given()
             .contentType("application/json")
@@ -132,9 +129,9 @@ public class ExecuteJobWorker implements Runnable{
             .then()
             .assertThat()
             .statusCode(202);
-            logger.debug("Sending job report successfull");
+            logger.debug("Sending job " + job.getJobId() + " report successfull");
         } catch (Exception e) {
-            logger.debug("Sending job report failed");
+            logger.debug("Sending job " + job.getJobId() + " report failed");
             logger.error(e.getMessage());
         }
     }

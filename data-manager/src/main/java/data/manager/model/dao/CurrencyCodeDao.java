@@ -1,8 +1,8 @@
-package data.manager.db.dao;
+package data.manager.model.dao;
 
-import data.manager.db.dao.exception.CurrencyDataException;
 import data.manager.db.jdbc.MySqlConnection;
 import data.manager.db.setup.InsertCurrencyData;
+import data.manager.model.dao.exception.CurrencyDataException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;

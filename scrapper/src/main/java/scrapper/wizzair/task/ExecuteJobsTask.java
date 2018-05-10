@@ -29,14 +29,7 @@ public class ExecuteJobsTask extends TimerTask {
     	for(JobDto job : jobs) {   
     	    if(job.getIsActive() == 0) { continue;}
     	    final int THREAD_POOL = 12;
-    	    
-    	    /*for(int i = 0; i < THREAD_POOL ; i++) {
-    	        String from = getFirstDayOfMonthDate(i);
-                String to = getLastDayOfMonthDate(i);
-    	        new ExecuteJobWorker(job, from, to).run();
-    	    }*/
-    	    
-    	    
+  	        	    
     	    ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL);
    	    
     	    for(int i = 0; i < THREAD_POOL ; i++) {

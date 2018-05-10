@@ -28,8 +28,11 @@ public class UpdateJobsTask extends TimerTask{
     @Scheduled(fixedDelay = 600000, initialDelay = 0)
     public void run() {       
         try {
-            jobs.clear();
-            jobs.addAll(new ObjectMapper().readValue(RestAssured.when().get(JOB_REQUEST).body().asString().toString(), new TypeReference<List<JobDto>>(){})); 
+            List<JobDto> results = new ObjectMapper().readValue(RestAssured.when().get(JOB_REQUEST).body().asString().toString(), new TypeReference<List<JobDto>>(){});
+            if(results != null && results.size() > 0) {
+                jobs.clear();
+                jobs.addAll(results); 
+            }         
         } catch (IOException e) {
             logger.error(e.getMessage());
         } 

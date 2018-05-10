@@ -1,4 +1,4 @@
-package data.manager.db.dao;
+package data.manager.model.dao;
 
 import data.manager.db.jdbc.MySqlConnection;
 import org.apache.log4j.Logger;
