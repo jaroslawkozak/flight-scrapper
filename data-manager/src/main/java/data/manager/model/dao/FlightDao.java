@@ -52,6 +52,62 @@ public class FlightDao extends AbstractDao{
         .setUpdatedDate(rs.getString(13));
     }
     
+    public List<FlightDao> select(List<String> departureStationIATA, List<String> arrivalStationIATA, String fromDate, String toDate){
+        if(departureStationIATA.isEmpty()) {
+            logger.error("departure station list cannot be empty!");
+            return null;
+        }
+        if(arrivalStationIATA.isEmpty()) {
+            logger.error("arrival station list cannot be empty!");
+            return null;
+        }
+        
+        StringBuffer selectQuery = new StringBuffer()
+            .append("SELECT * FROM flights WHERE")
+            .append(prepareDepartureStationQueryPiece(departureStationIATA))
+            .append(" AND")
+            .append(prepareArrivalStationQueryPiece(arrivalStationIATA))
+            .append(" AND departureDate between '" + fromDate + "' AND '" + toDate + "'");
+        
+        logger.trace(selectQuery);
+        ResultSet rs;
+        try {
+            rs = MySqlConnection.executeQuery(selectQuery.toString());
+            rs.first();
+        } catch (SQLException e) {
+            logger.error("There was an issue with processing select query", e);
+        }
+        
+        //TODO
+        return null;  
+    }
+    
+    private String prepareArrivalStationQueryPiece(List<String> arrivalStationIATA) {
+        StringBuffer queryPiece = new StringBuffer();
+        queryPiece.append(" (");
+        for(int i = 0; i < arrivalStationIATA.size(); i++) {
+            queryPiece.append("arrivalStationId=" + AirportDao.select(arrivalStationIATA.get(i)).getAirportId());
+            if(i < arrivalStationIATA.size() - 1) {
+                queryPiece.append(" OR");
+            }
+        }
+        queryPiece.append(")");
+        return queryPiece.toString();
+    }
+    
+    private String prepareDepartureStationQueryPiece(List<String> departureStationIATA) {
+        StringBuffer queryPiece = new StringBuffer();
+        queryPiece.append(" (");
+        for(int i = 0; i < departureStationIATA.size(); i++) {
+            queryPiece.append(" departureStationId=" + AirportDao.select(departureStationIATA.get(i)).getAirportId());
+            if(i < departureStationIATA.size() - 1) {
+                queryPiece.append(" OR");
+            }
+        }
+        queryPiece.append(")");
+        return queryPiece.toString();
+    }
+    
     @Override
     public void insert() {
         if(this.flightId != -1) {

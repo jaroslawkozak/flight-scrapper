@@ -1,0 +1,16 @@
+.wrapper {
+	width: 1000px;
+	margin: 0 auto;
+}
+
+/* Middle
+-----------------------------------------------------------------------------*/
+.middle {
+	width: 100%;
+	position: relative;
+}
+.middle:after {
+	display: table;
+	clear: both;
+	content: '';
+}

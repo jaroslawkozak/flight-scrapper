@@ -27,7 +27,7 @@ public class ExecuteJobWorker implements Runnable{
     private static final String DATA_MANAGER_ADDRESS = "http://" + ScrapperConfiguration.getDataManagerHost() + ":" + ScrapperConfiguration.getDataManagerPort();
     private static final String FLIGHT_RECORD_REQUEST = DATA_MANAGER_ADDRESS + "/recordedFlights?scrapperName=" + WizzairScrapperApplication.SCRAPPER_AIRLINE_NAME;
     private static final String JOB_REPORT_REQUEST = DATA_MANAGER_ADDRESS + "/jobReport";
-    private static final String SCRAP_API_VERSION = "7.12.3";
+    private static final String SCRAP_API_VERSION = ScrapperConfiguration.getWizzairApiVersion();
     private static final String SCRAP_REQUEST = "https://be.wizzair.com/" + SCRAP_API_VERSION + "/Api/search/timetable";
     
     private JobDto job;

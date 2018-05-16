@@ -1,8 +1,10 @@
 package data.manager.controller;
 
+import data.manager.dto.FlightDataDto;
 import data.manager.dto.JobReportDto;
 import data.manager.dto.TimetableScrapDto;
 import data.manager.model.dao.JobDao;
+import data.manager.model.flight.FlightDataParser;
 import data.manager.model.flight.FlightHandler;
 import data.manager.model.job.JobHandler;
 import org.springframework.http.HttpStatus;
@@ -17,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
+@CrossOrigin
 @RestController
 public class DataManagerController {
     @RequestMapping(value = "/addJob", method = RequestMethod.POST)
@@ -29,10 +31,17 @@ public class DataManagerController {
         return new ResponseEntity<Object>(HttpStatus.CREATED);
     }
     
-    @CrossOrigin(origins = "http://localhost:3000")
     @RequestMapping(value = "/getJobs", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
     public List<JobDao> getJobs() {    
        return JobDao.selectAll();
+    }
+    
+    @RequestMapping(value = "/getJobData", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
+    public List<FlightDataDto> getJobData(@RequestParam(value = "fromDate", required = false) String fromDate) {   
+       if(fromDate == null || fromDate.equals("")) {
+           return FlightDataParser.getFlightData();
+       }
+       return FlightDataParser.getFlightData(fromDate);
     }
     
     @PostMapping(value = "/recordedFlights")

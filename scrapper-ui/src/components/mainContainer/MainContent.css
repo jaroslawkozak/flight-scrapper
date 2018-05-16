@@ -1,0 +1,15 @@
+.container {
+	width: 100%;
+	float: left;
+	overflow: hidden;
+}
+.contentWrapper {
+	padding: 0 0 0 265px;
+}
+
+.content {
+	padding: 5px;
+	border: solid 1px;
+	border-radius: 5px;
+	border-color: #AAAAAA;
+}

@@ -1,0 +1,14 @@
+.jobItem {
+  list-style-type: none;
+  padding: 5px;
+  margin: 2px;
+  position: relative;
+  background: #d8ffd3;
+  border: solid 1px;
+  border-radius: 5px;
+  border-color: #AAAAAA;
+}
+
+.inactive {
+  background: #ffd7d7;
+}
