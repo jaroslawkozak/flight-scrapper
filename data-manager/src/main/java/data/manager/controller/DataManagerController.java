@@ -37,11 +37,11 @@ public class DataManagerController {
     }
     
     @RequestMapping(value = "/getJobData", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
-    public List<FlightDataDto> getJobData(@RequestParam(value = "fromDate", required = false) String fromDate) {   
+    public List<FlightDataDto> getJobData(@RequestParam int jobId, @RequestParam(value = "fromDate", required = false) String fromDate) {   
        if(fromDate == null || fromDate.equals("")) {
-           return FlightDataParser.getFlightData();
+           return FlightDataParser.getFlightData(jobId);
        }
-       return FlightDataParser.getFlightData(fromDate);
+       return FlightDataParser.getFlightData(jobId, fromDate);
     }
     
     @PostMapping(value = "/recordedFlights")

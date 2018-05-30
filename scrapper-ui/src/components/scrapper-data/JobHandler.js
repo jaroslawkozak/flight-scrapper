@@ -11,7 +11,6 @@ class JobsComponent extends Component {
   }
 
   render(){
-    //this.handleJobClick(3);
     return(
       this.state.jobs.map(function(item){
         return <Job

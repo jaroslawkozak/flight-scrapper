@@ -11,5 +11,5 @@ public class FlightDataDto {
     private String outboundFlightDate;
     private String inboundFlightDate;
     private int days;
-    private int price;
+    private String price;
 }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import JobCalendar from './../scrapper-data/JobCalendar';
+import JobFlightDataTable from './../scrapper-data/flightDataTable/JobFlightDataTable';
 import './MainContent.css';
 
 class Content extends Component {
@@ -8,7 +8,7 @@ class Content extends Component {
       <div className="container">
         <main className="contentWrapper">
           <div className="content">
-            <JobCalendar job={this.props.job} />
+            <JobFlightDataTable flightData={this.props.flightData} />
           </div>
         </main>
       </div>
