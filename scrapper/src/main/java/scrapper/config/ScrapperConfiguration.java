@@ -21,6 +21,4 @@ public class ScrapperConfiguration {
     private String dataManagerHost = props.getProperty("datamanager.host");
     static @Getter
     private String dataManagerPort = props.getProperty("datamanager.port");
-    static @Getter
-    private String wizzairApiVersion = props.getProperty("wizzair.api.version");
 }

@@ -35,6 +35,8 @@ public class UpdateJobsTask extends TimerTask{
             }         
         } catch (IOException e) {
             logger.error(e.getMessage());
+            logger.error("Job list update failed.");
+            return;
         } 
         logger.debug("Job list have been updated.");
     }
