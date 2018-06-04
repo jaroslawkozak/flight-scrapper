@@ -29,7 +29,10 @@ class JobsComponent extends Component {
   }
 
   getJobs(){
-    axios.get('http://127.0.0.1:7701/getJobs')
+    var DATA_MANAGER_HOST_ADDRESS = "http://10.22.90.79"
+    //var DATA_MANAGER_HOST_ADDRESS = "http://localhost"
+    var DATA_MANAGER_HOST_PORT = "7701";
+    axios.get(DATA_MANAGER_HOST_ADDRESS + ":" + DATA_MANAGER_HOST_PORT + "/getJobs")
       .then(response => this.setState({jobs: response.data}))
       .catch(error => console.log(error.response));
   }

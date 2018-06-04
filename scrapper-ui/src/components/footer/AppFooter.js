@@ -5,7 +5,10 @@ class AppFooter extends Component {
   render() {
     return (
       <footer className="footer">
-        <strong>Footer</strong>
+        <strong>ToDo:</strong> <br />
+        Job management <br />
+        Flight details <br />
+        Moving dates <br />
       </footer>
     );
   }

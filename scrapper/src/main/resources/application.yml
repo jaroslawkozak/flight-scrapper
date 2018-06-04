@@ -1,2 +1,28 @@
 server:
   port: 7801
+  error:
+    whitelabel:
+      enabled: false
+  jsp-servlet:
+    registered: false
+  
+spring:
+  jmx:
+    enabled: false
+  freemaker:
+    enable: false
+  groovy:
+    template:
+      enabled: false
+  http:
+    multipart:
+      enabled: false
+  mobile:
+    sitepreference:
+      enabled: false
+  session:
+    jdbc:
+      initializer:
+        enabled: false
+  thymeleaf:  
+    cache: false

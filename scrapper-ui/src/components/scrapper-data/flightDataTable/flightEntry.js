@@ -1,18 +1,23 @@
 import React, { Component } from 'react';
-import './flightEntry.css'
+import './flightDataTable.css'
 
 class FlightEntry extends Component {
 
   render() {
     const { flightData }  = this.props;
-    return (
-      <div className="flightEntry">
-          {/*outId: {flightData.outboundFlightId}
-          inId: {flightData.inboundFlightId}*/}
-          {flightData.inboundFlightDate} <br /> {flightData.days} - {flightData.price}
-          {/*inDate: {flightData.inboundFlightDate}*/}
-      </div>
-    );
+    if(typeof flightData != 'undefined'){
+      return ( 
+        <div className="flightEntry">
+         {flightData.days} - {flightData.price}
+        </div>
+      );
+    } else {
+      return ( 
+        <div>
+         
+        </div>
+      );
+    }
   }
 
 }

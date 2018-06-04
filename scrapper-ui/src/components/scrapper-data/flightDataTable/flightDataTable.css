@@ -1,0 +1,29 @@
+.flightEntry {
+	float: left;
+	padding: 5px;
+	border: solid 1px;
+	border-radius: 5px;
+	border-color: #AAAAAA;
+
+	font-size: 11px;
+}
+
+.flightLabel {
+	float: left;
+	padding: 5px;
+	border: solid 1px;
+	border-radius: 5px;
+	border-color: #AAAAAA;
+
+	font-size: 10px;
+}
+
+.spinner {
+	height: auto;
+	padding-top: 50px;
+	padding-left: 50%;
+}
+
+.spinner-image {
+	height: 40px;
+}

@@ -8,7 +8,7 @@ class Content extends Component {
       <div className="container">
         <main className="contentWrapper">
           <div className="content">
-            <JobFlightDataTable flightData={this.props.flightData} />
+            <JobFlightDataTable flightData={this.props.flightData} loading={this.props.loading}/>
           </div>
         </main>
       </div>

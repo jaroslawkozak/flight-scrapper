@@ -11,7 +11,8 @@ class App extends Component {
     super()
     this.state = ({
         job: {jobId: 0},
-        flightData: []
+        flightData: [],
+        loading: false
       });
     this.handleJobClick = this.handleJobClick.bind(this);
   }
@@ -27,7 +28,7 @@ class App extends Component {
       <div className="wrapper">
         <AppHeader />
       	<div className="middle">
-          <Content flightData={this.state.flightData}/>
+          <Content flightData={this.state.flightData} loading={this.state.loading}/>
           <Sidebar onClick={this.handleJobClick}/>
       	</div>
         <AppFooter />
@@ -36,9 +37,14 @@ class App extends Component {
   }
 
   getJobData(jobId){
-    axios.get("http://127.0.0.1:7701/getJobData?jobId=" + jobId)
-      .then(response => this.setState({flightData: response.data}))
-      .catch(error => console.log(error.response));
+    var DATA_MANAGER_HOST_ADDRESS = "http://10.22.90.79"
+    //var DATA_MANAGER_HOST_ADDRESS = "http://localhost"
+    var DATA_MANAGER_HOST_PORT = "7701";
+    this.setState({ loading: true }, () => {
+      axios.get(DATA_MANAGER_HOST_ADDRESS + ":" + DATA_MANAGER_HOST_PORT + "/getJobData?jobId=" + jobId)
+        .then(response => this.setState({flightData: response.data, loading: false}))
+        .catch(error => console.log(error.response));
+    });
   }
 
 }

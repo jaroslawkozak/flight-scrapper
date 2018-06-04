@@ -9,10 +9,10 @@
 
 .content {
 	height: auto;
+	min-height: 200px;
 	display: flex;
 	flex-wrap: wrap;
 	padding: 5px;
-	border: solid 1px;
-	border-radius: 5px;
 	border-color: #AAAAAA;
+	background: rgba(255,255,255,0.5);
 }
