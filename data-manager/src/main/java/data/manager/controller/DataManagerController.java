@@ -1,8 +1,10 @@
 package data.manager.controller;
 
 import data.manager.dto.FlightDataDto;
+import data.manager.dto.FlightDetailsDto;
 import data.manager.dto.JobReportDto;
 import data.manager.dto.TimetableScrapDto;
+import data.manager.model.dao.FlightDao;
 import data.manager.model.dao.JobDao;
 import data.manager.model.flight.FlightDataParser;
 import data.manager.model.flight.FlightHandler;
@@ -34,6 +36,11 @@ public class DataManagerController {
     @RequestMapping(value = "/getJobs", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
     public List<JobDao> getJobs() {    
        return JobDao.selectAll();
+    }
+    
+    @RequestMapping(value = "/getFlightDetails", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
+    public FlightDetailsDto getFlightDetails(@RequestParam int flightId) {    
+       return new FlightDetailsDto(FlightDao.select(flightId));
     }
     
     @RequestMapping(value = "/getJobData", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})

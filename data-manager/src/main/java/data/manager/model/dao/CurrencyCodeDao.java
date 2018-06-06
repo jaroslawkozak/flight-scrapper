@@ -18,7 +18,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = false)
 public class CurrencyCodeDao extends AbstractDao {
     private final static Logger logger = Logger.getLogger(CurrencyCodeDao.class);
-    private int currencyId;
+    private String currencyId;
     private String currencyCode;
     private String currencyName;
     private static Map<String, CurrencyCodeDao> resultsBuffer = new HashMap<String,CurrencyCodeDao>();
@@ -32,28 +32,37 @@ public class CurrencyCodeDao extends AbstractDao {
         executeUpdate(insertTableSQL);  
     }
 
-    public static CurrencyCodeDao select(String currencyCode){
-        if(resultsBuffer.containsKey(currencyCode)) {
-            return resultsBuffer.get(currencyCode);
+    public static CurrencyCodeDao selectById(String currencyId){
+        return CurrencyCodeDao.select("currencyId", currencyId);
+    }
+    
+    public static CurrencyCodeDao selectByCode(String currencyCode){
+        return CurrencyCodeDao.select("currencyCode", currencyCode);
+    }
+    
+    private static CurrencyCodeDao select(String fieldName, String fieldValue){
+        if(resultsBuffer.containsKey(fieldName)) {
+            return resultsBuffer.get(fieldName);
         }
 
         try {
+            String query = "SELECT COUNT(*) FROM currencyCodes WHERE " + fieldName + "='" + fieldValue + "'";
+            logger.debug(query);
             if (!isCountOne(
-                    MySqlConnection.executeQuery("SELECT COUNT(*) FROM currencyCodes WHERE currencyCode='"
-                            + currencyCode + "'"))) {
+                    MySqlConnection.executeQuery(query))) {
                 throw new CurrencyDataException(
                         "There is an issue with result data, there should be exactly 1 result");
                 
             }
             StringBuffer selectSQL = new StringBuffer().append(
-                    "SELECT * FROM currencyCodes WHERE currencyCode='" + currencyCode + "'");
+                    "SELECT * FROM currencyCodes WHERE " + fieldName + "='" + fieldValue + "'");
 
             logger.trace(selectSQL);
             ResultSet rs = MySqlConnection.executeQuery(selectSQL.toString());
             rs.first();
-            CurrencyCodeDao result = new CurrencyCodeDao().setCurrencyId(rs.getInt(1))
+            CurrencyCodeDao result = new CurrencyCodeDao().setCurrencyId(rs.getString(1))
                     .setCurrencyCode(rs.getString(2)).setCurrencyName(rs.getString(3));
-            resultsBuffer.put(currencyCode, result);
+            resultsBuffer.put(fieldName, result);
             return result;
         } catch (SQLException e) {
             logger.error(e.getMessage());

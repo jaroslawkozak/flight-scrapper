@@ -27,6 +27,7 @@ public class FlightDataParser {
         String toDate;
         try {
             toDate = DMDateUtils.addMonth(fromDate);
+
         } catch (ParseException e) {
             logger.error(e.getMessage());
             return null;

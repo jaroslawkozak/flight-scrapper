@@ -24,7 +24,7 @@ public class FlightDao extends AbstractDao{
     private String arrivalStationIATA;
     private String departureDate;
     private String amount;
-    private String currencyCode;
+    private String currencyId;
     private String priceType;
     private List<String> departureDates;
     private String classOfService;
@@ -42,7 +42,7 @@ public class FlightDao extends AbstractDao{
         .setArrivalStationIATA(AirportDao.select(rs.getInt(3)).getIATA())
         .setDepartureDate(rs.getString(4))
         .setAmount(rs.getString(5))
-        .setCurrencyCode(rs.getString(6))
+        .setCurrencyId(rs.getString(6))
         .setPriceType(rs.getString(7))
         .setDepartureDates(convertStringToList(rs.getString(8)))
         .setClassOfService(rs.getString(9))
@@ -52,6 +52,21 @@ public class FlightDao extends AbstractDao{
         .setUpdatedDate(rs.getString(13));
     }
     
+    public static FlightDao select(int flightId) {
+        StringBuffer selectQuery = new StringBuffer()
+                .append("SELECT * FROM flights WHERE flightId='" + flightId + "'");
+        logger.trace(selectQuery);
+        ResultSet rs;
+        try {
+            rs = MySqlConnection.executeQuery(selectQuery.toString());
+            rs.first();
+            return new FlightDao(rs);          
+        } catch (SQLException e) {
+            logger.error("There was an issue with processing query", e);
+        }       
+        return null;        
+    }
+        
     /**
      * 
      * @param departureStationIATA
@@ -131,7 +146,7 @@ public class FlightDao extends AbstractDao{
                         .append(",\"" + AirportDao.select(this.arrivalStationIATA).getAirportId() + "\"")
                         .append(",\"" + this.departureDate + "\"")
                         .append(",\"" + this.amount + "\"")
-                        .append(",\"" + CurrencyCodeDao.select(this.currencyCode).getCurrencyId() + "\"")
+                        .append(",\"" + this.currencyId + "\"")
                         .append(",\"" + this.priceType + "\"")
                         .append(",\"" + convertListToString(this.departureDates) + "\"")
                         .append(",\"" + this.classOfService + "\"")
@@ -156,7 +171,7 @@ public class FlightDao extends AbstractDao{
         insertTableSQL.append("UPDATE flights ")
                         .append("SET ")
                         .append("amount = \"" + this.amount + "\"")
-                        .append(", currencyId = \"" + CurrencyCodeDao.select(this.currencyCode).getCurrencyId() + "\"")
+                        .append(", currencyId = \"" + this.currencyId + "\"")
                         .append(", priceType = \"" + this.priceType + "\"")
                         .append(", departureDates = \"" + convertListToString(this.departureDates) + "\"")
                         .append(", classOfService = \"" + this.classOfService + "\"")

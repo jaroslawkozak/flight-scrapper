@@ -21,7 +21,7 @@ public class InsertCurrencyData implements Runnable{
             while((line = br.readLine()) != null ) {
                 String[] lineArr = line.split(";");
                 CurrencyCodeDao currencyData = new CurrencyCodeDao()
-                        .setCurrencyId(Integer.parseInt(lineArr[2]))
+                        .setCurrencyId(lineArr[2])
                         .setCurrencyCode(lineArr[1])
                         .setCurrencyName(lineArr[0]);
                 currencyData.insert();
