@@ -2,6 +2,7 @@ package data.manager.model.flight;
 
 import data.manager.dto.FlightDto;
 import data.manager.dto.TimetableScrapDto;
+import data.manager.model.dao.CurrencyCodeDao;
 import data.manager.model.dao.FlightDao;
 import lombok.AllArgsConstructor;
 
@@ -34,7 +35,7 @@ public class FlightHandler {
                         .setArrivalStationIATA(f.getArrivalStation())
                         .setDepartureDate(f.getDepartureDate())
                         .setAmount(Double.toString(f.getPrice().getAmount()))
-                        .setCurrencyId(f.getPrice().getCurrencyCode())
+                        .setCurrencyId(CurrencyCodeDao.selectByCode(f.getPrice().getCurrencyCode()).getCurrencyId())
                         .setPriceType(f.getPriceType())
                         .setDepartureDates(f.getDepartureDates())
                         .setClassOfService(f.getClassOfService())
