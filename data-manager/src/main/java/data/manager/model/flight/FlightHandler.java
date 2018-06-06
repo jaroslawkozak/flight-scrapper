@@ -34,7 +34,7 @@ public class FlightHandler {
                         .setArrivalStationIATA(f.getArrivalStation())
                         .setDepartureDate(f.getDepartureDate())
                         .setAmount(Double.toString(f.getPrice().getAmount()))
-                        .setCurrencyCode(f.getPrice().getCurrencyCode())
+                        .setCurrencyId(f.getPrice().getCurrencyCode())
                         .setPriceType(f.getPriceType())
                         .setDepartureDates(f.getDepartureDates())
                         .setClassOfService(f.getClassOfService())
