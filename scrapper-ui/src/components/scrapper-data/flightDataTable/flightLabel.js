@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './flightDataTable.css'
+import './flightDataTable.css';
 
 class FlightLabel extends Component {
 

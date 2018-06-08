@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './Sidebar.css';
-import JobHandler from '../scrapper-data/JobHandler';
+import JobHandler from '../scrapper-data/jobs/JobHandler';
 
 class Sidebar extends Component {
   constructor(props){

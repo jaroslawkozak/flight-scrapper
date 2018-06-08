@@ -1,56 +1,85 @@
 import React, { Component } from 'react';
 import FlightEntry from './flightEntry';
 import FlightLabel from './flightLabel';
-import LoadingSpinner from './loadingSpinner';
-import * as _ from 'lodash';
+import LoadingSpinner from '../../loadingSpinner/loadingSpinner.js';
 
 class JobFlightDataTable extends Component {
+  constructor(){
+    super();
+    this.handleFlightEntryClick = this.handleFlightEntryClick.bind(this);
+  }
+  
+  handleFlightEntryClick(flightEntry){
+    this.props.onClick(flightEntry);
+  }
+
+
   getDataEntries = () => {
     let flightData = this.props.flightData;
-    let cols = [];
-    let rows = [];
+    let data = {
+      cols : [], 
+      rows : [],
+      min : -1,
+      max : -1
+    }
 
-    this.getUniqueColumnsAndRows(flightData, cols, rows);
-    let resultData = this.getResultDataWithEmptyEntries(cols, rows);
-    this.fillResultDataWithFligthData(resultData, flightData);
+    this.parseFlightData(flightData, data);
+    let resultData = this.getResultDataWithEmptyEntries(data);
+    this.fillResultDataWithFligthData(resultData, flightData, data);
    
     let tableContent = [];
-    tableContent.push(<tr>{this.fillAndGetTableHeader(cols)}</tr>);
+    tableContent.push(<tr>{this.fillAndGetTableHeader(data.cols)}</tr>);
 
-    for(var rowIter = 0; rowIter < rows.length; rowIter++){
-      tableContent.push(<tr>{this.fillAndGetTableRow(resultData, cols, rows[rowIter])}</tr>);
+    for(var rowIter = 0; rowIter < data.rows.length; rowIter++){
+      tableContent.push(<tr>{this.fillAndGetTableRow(resultData, data.cols, data.rows[rowIter])}</tr>);
     }
 
     let table = <table><tbody>{tableContent}</tbody></table>
     return table;
   }
 
-  getUniqueColumnsAndRows(flightData, cols, rows){
+  parseFlightData(flightData, data){
     for(var i=0; i < flightData.length; i++) {
-      if(!cols.includes(flightData[i].inboundFlightDate)){
-        cols.push(flightData[i].inboundFlightDate);
+      if(!data.cols.includes(flightData[i].inboundFlightDate)){
+        data.cols.push(flightData[i].inboundFlightDate);
       }
 
-      if(!rows.includes(flightData[i].outboundFlightDate)){
-        rows.push(flightData[i].outboundFlightDate);
+      if(!data.rows.includes(flightData[i].outboundFlightDate)){
+        data.rows.push(flightData[i].outboundFlightDate);
       } 
+
+      if(data.min == -1 || data.min > flightData[i].price){
+        data.min = flightData[i].price;
+      } 
+
+      if(data.max == -1 || data.max < flightData[i].price){
+        data.max = flightData[i].price;
+      }
     }
-    cols.sort();
-    rows.sort();
+    data.cols.sort();
+    data.rows.sort();
   }
 
-  fillResultDataWithFligthData(resultData, flightData){
+  normalize(x, data){
+    return (x - data.min) / (data.max - data.min);
+  }
+
+  fillResultDataWithFligthData(resultData, flightData, data){
     for(var i=0; i < flightData.length; i++) {
-      resultData[flightData[i].inboundFlightDate][flightData[i].outboundFlightDate] = <td><FlightEntry flightData={flightData[i]}/></td>;
+      resultData[flightData[i].inboundFlightDate][flightData[i].outboundFlightDate] = <td><FlightEntry 
+        flightData={flightData[i]} 
+        fill={this.normalize(flightData[i].price, data)}
+        onClick={this.handleFlightEntryClick}
+        /></td>;
     }
   }
 
-  getResultDataWithEmptyEntries(cols, rows){
+  getResultDataWithEmptyEntries(data){
     let resultData = []
-    for(var columnIter = 0; columnIter < cols.length; columnIter++){
-      resultData[cols[columnIter]] = [];
-      for(var rowIter = 0; rowIter < rows.length; rowIter++){
-        resultData[cols[columnIter]][rows[rowIter]] = <td><FlightEntry/></td>;
+    for(var columnIter = 0; columnIter < data.cols.length; columnIter++){
+      resultData[data.cols[columnIter]] = [];
+      for(var rowIter = 0; rowIter < data.rows.length; rowIter++){
+        resultData[data.cols[columnIter]][data.rows[rowIter]] = <td><FlightEntry/></td>;
       }
     }
     return resultData;
@@ -75,7 +104,6 @@ class JobFlightDataTable extends Component {
   }
 
   render() {
-    console.log('loading', this.props.loading);
     return (
         this.props.loading ? <LoadingSpinner /> : this.getDataEntries()
     );

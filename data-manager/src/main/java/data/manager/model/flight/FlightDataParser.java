@@ -37,19 +37,14 @@ public class FlightDataParser {
         List<FlightDao> outboundFlights = new ArrayList<FlightDao>();
         List<FlightDao> inboundFlights = new ArrayList<FlightDao>();
         
-        for(FlightDao flight : flights) {
-            if(job.getDepartureStationIATA().contains(flight.getDepartureStationIATA()) &&
-                    job.getArrivalStationIATA().contains(flight.getArrivalStationIATA())){
-                outboundFlights.add(flight);
-            } else if(job.getArrivalStationIATA().contains(flight.getDepartureStationIATA()) &&
-                    job.getDepartureStationIATA().contains(flight.getArrivalStationIATA())){
-                inboundFlights.add(flight);
-            } else {
-                logger.error("Error with stations: departure " + flight.getDepartureStationIATA() + ", arrival " + flight.getArrivalStationIATA());
-            }
-        }
+        sortInAndOutFlights(job, flights, outboundFlights, inboundFlights);
         flights = null;
-                
+
+        return generateFlightDataResults(outboundFlights, inboundFlights);     
+    }
+
+    private static List<FlightDataDto> generateFlightDataResults(List<FlightDao> outboundFlights,
+            List<FlightDao> inboundFlights) {
         List<FlightDataDto> flightDataResults = new ArrayList<FlightDataDto>();
         for(FlightDao outflight : outboundFlights) {
             for(FlightDao inflight : inboundFlights) {
@@ -73,8 +68,23 @@ public class FlightDataParser {
                     return null;
                 }
             }
-        } 
-        return flightDataResults;    
+        }
+        return flightDataResults;
+    }
+
+    private static void sortInAndOutFlights(JobDao job, List<FlightDao> flights,
+            List<FlightDao> outboundFlights, List<FlightDao> inboundFlights) {
+        for(FlightDao flight : flights) {
+            if(job.getDepartureStationIATA().contains(flight.getDepartureStationIATA()) &&
+                    job.getArrivalStationIATA().contains(flight.getArrivalStationIATA())){
+                outboundFlights.add(flight);
+            } else if(job.getArrivalStationIATA().contains(flight.getDepartureStationIATA()) &&
+                    job.getDepartureStationIATA().contains(flight.getArrivalStationIATA())){
+                inboundFlights.add(flight);
+            } else {
+                logger.error("Error with stations: departure " + flight.getDepartureStationIATA() + ", arrival " + flight.getArrivalStationIATA());
+            }
+        }
     }
         
     private static String sumPrices(String p1, String p2) {

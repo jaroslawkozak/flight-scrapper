@@ -1,0 +1,41 @@
+.singleFlightDetails {
+	height: auto;
+	width: 50%;
+	min-height: 100px;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.singleFlightContent {
+	font-family: Source Sans Pro,sans-serif;
+    padding: 5px;
+    width: inherit;
+}
+
+.airlineName{
+	height: 35px;
+}
+
+.priceWrapper {
+
+}
+
+.price {
+    font-size: 26px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.currency {
+    display: inline-block;
+}
+
+.hours {
+
+}
+
+.city {
+    font-size: 20px;
+    font-weight: bold;
+    width: inherit;
+}
