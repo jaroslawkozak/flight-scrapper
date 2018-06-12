@@ -3,6 +3,7 @@ import AppHeader from './../header/AppHeader';
 import Sidebar from './../left-sidebar/Sidebar';
 import Content from './../mainContainer/MainContent';
 import AppFooter from './../footer/AppFooter';
+import {hostsconfig} from '../../properties/config.js'
 import axios from 'axios'
 import './App.css';
 
@@ -37,11 +38,8 @@ class App extends Component {
   }
 
   getJobData(jobId){
-    var DATA_MANAGER_HOST_ADDRESS = "http://10.22.90.79"
-    //var DATA_MANAGER_HOST_ADDRESS = "http://localhost"
-    var DATA_MANAGER_HOST_PORT = "7701";
     this.setState({ loading: true }, () => {
-      axios.get(DATA_MANAGER_HOST_ADDRESS + ":" + DATA_MANAGER_HOST_PORT + "/getJobData?jobId=" + jobId)
+      axios.get(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/getJobData?jobId=" + jobId)
         .then(response => this.setState({flightData: response.data, loading: false}))
         .catch(error => console.log(error.response));
     });

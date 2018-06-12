@@ -1,17 +1,21 @@
 import React, { Component } from 'react';
+import LoadingSpinner from '../../loadingSpinner/loadingSpinner'
 import axios from 'axios'
+import {hostsconfig} from '../../../properties/config.js'
 import Job from './Job';
 
 class JobsComponent extends Component {
   constructor(props){
     super(props);
-    this.state = { jobs: [] };
+    this.state = { jobs: [],
+                  loading: true };
     this.getJobs();
     this.handleJobClick = this.handleJobClick.bind(this);
   }
 
   render(){
     return(
+      this.state.loading ? <LoadingSpinner /> :
       this.state.jobs.map(function(item){
         return <Job
                 jobId={item.jobId}
@@ -24,16 +28,17 @@ class JobsComponent extends Component {
     );
   }
 
+  showJobs(){
+
+  }
+
   handleJobClick(jobId){
     this.props.onClick(jobId);
   }
 
   getJobs(){
-    var DATA_MANAGER_HOST_ADDRESS = "http://10.22.90.79"
-    //var DATA_MANAGER_HOST_ADDRESS = "http://localhost"
-    var DATA_MANAGER_HOST_PORT = "7701";
-    axios.get(DATA_MANAGER_HOST_ADDRESS + ":" + DATA_MANAGER_HOST_PORT + "/getJobs")
-      .then(response => this.setState({jobs: response.data}))
+    axios.get(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/getJobs")
+      .then(response => this.setState({jobs: response.data, loading: false}))
       .catch(error => console.log(error.response));
   }
 

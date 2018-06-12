@@ -9,6 +9,10 @@
   border-color: #AAAAAA;
 }
 
+.jobDetails{
+  display: inline;
+}
+
 .inactive {
   background: #ffd7d7;
 }
