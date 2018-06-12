@@ -7,7 +7,7 @@ class LoadingSpinner extends Component {
         this.sleep(1000)
         return (
         <div className="spinner">
-            <img className="spinner-image" src={ spinnerImage } /> <br />
+            <img className="spinner-image" src={ spinnerImage } alt="loading spinner"/> <br />
             Loading...
         </div>
         );

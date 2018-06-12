@@ -24,7 +24,7 @@ import java.util.List;
 @CrossOrigin
 @RestController
 public class DataManagerController {
-    @RequestMapping(value = "/addJob", method = RequestMethod.POST)
+    @RequestMapping(value = "/jobs/add", method = RequestMethod.POST)
     public ResponseEntity<?> addJob(@RequestParam("departureStation") String departureStation, @RequestParam("arrivalStation") String arrivalStation) {
         new JobDao()
             .setDepartureStationIATA(departureStation)
@@ -33,17 +33,30 @@ public class DataManagerController {
         return new ResponseEntity<Object>(HttpStatus.CREATED);
     }
     
-    @RequestMapping(value = "/getJobs", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/jobs/get", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
     public List<JobDao> getJobs() {    
        return JobDao.selectAll();
     }
     
-    @RequestMapping(value = "/getFlightDetails", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
-    public FlightDetailsDto getFlightDetails(@RequestParam int flightId) {    
-       return new FlightDetailsDto(FlightDao.select(flightId));
+    @RequestMapping(value = "/jobs/activate", method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> activateJob(@RequestParam int jobId) {       
+        JobDao.select(jobId).activate();
+        return new ResponseEntity<Object>(HttpStatus.OK);
     }
     
-    @RequestMapping(value = "/getJobData", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/jobs/deactivate", method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> deactivateJob(@RequestParam int jobId) {       
+        JobDao.select(jobId).deactivate();
+        return new ResponseEntity<Object>(HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/jobs/delete", method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> deleteJob(@RequestParam int jobId) {       
+        JobDao.select(jobId).softDelete();
+        return new ResponseEntity<Object>(HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/flights/getOneMonthData", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
     public List<FlightDataDto> getJobData(@RequestParam int jobId, @RequestParam(value = "fromDate", required = false) String fromDate) {   
        if(fromDate == null || fromDate.equals("")) {
            return FlightDataParser.getFlightData(jobId);
@@ -51,7 +64,12 @@ public class DataManagerController {
        return FlightDataParser.getFlightData(jobId, fromDate);
     }
     
-    @PostMapping(value = "/recordedFlights")
+    @RequestMapping(value = "/flights/getSingleFlightDetails", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
+    public FlightDetailsDto getFlightDetails(@RequestParam int flightId) {    
+       return new FlightDetailsDto(FlightDao.select(flightId));
+    }
+
+    @PostMapping(value = "/flights/addFlightRecords")
     public ResponseEntity<?> putFlights(@RequestBody TimetableScrapDto timetable, @RequestParam("scrapperName") String scrapperName) {
     	new FlightHandler().parseTimetable(timetable, scrapperName);
         return new ResponseEntity<Object>(HttpStatus.ACCEPTED);

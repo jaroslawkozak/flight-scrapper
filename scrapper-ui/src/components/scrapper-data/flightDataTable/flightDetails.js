@@ -11,8 +11,8 @@ class FlightDetails extends Component {
   }
 
   render() {
-    const { outboundFlightDetails, inboundFlightDetails, loading }  = this.props;
-    if(typeof outboundFlightDetails.flightData != 'undefined' && typeof inboundFlightDetails.flightData != 'undefined') {
+    const { outboundFlightDetails, inboundFlightDetails }  = this.props;
+    if(typeof outboundFlightDetails.flightData !== 'undefined' && typeof inboundFlightDetails.flightData !== 'undefined') {
       return (
         <div className="flightDetailsWrapper">  
           <SingleFlightDetailsEntry flightDetails={outboundFlightDetails}/>

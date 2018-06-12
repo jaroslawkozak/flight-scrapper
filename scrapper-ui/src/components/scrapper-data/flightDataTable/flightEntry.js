@@ -14,9 +14,9 @@ class FlightEntry extends Component {
   render() {
     const { flightData, fill }  = this.props;
 
-    if(typeof flightData != 'undefined'){
+    if(typeof flightData !== 'undefined'){
       let red = 255 * fill;
-      let blue = 255 - 255*fill;
+      let blue = 255 - 255 * fill;
       let styles = {
         background: 'rgba(' + Math.round(red) + ',' + Math.round(blue) + ',0,0.2)'
       };

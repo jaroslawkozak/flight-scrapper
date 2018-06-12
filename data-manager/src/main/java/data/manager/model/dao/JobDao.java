@@ -31,6 +31,7 @@ public class JobDao extends AbstractDao {
     private int totalFailed;
     private int failedInRow;
     private int isActive;
+    private int isDeleted;
     
     public JobDao() {}
     public JobDao(ResultSet rs) throws SQLException {
@@ -46,7 +47,8 @@ public class JobDao extends AbstractDao {
         .setTotalSuccess(rs.getInt("totalSuccess"))
         .setTotalFailed(rs.getInt("totalFailed"))
         .setFailedInRow(rs.getInt("failedInRow"))
-        .setIsActive(rs.getInt("isActive")); 
+        .setIsActive(rs.getInt("isActive"))
+        .setIsDeleted(rs.getInt("isDeleted"));
     }
     
     @Override
@@ -118,6 +120,45 @@ public class JobDao extends AbstractDao {
         }
     }
     
+    public void activate() {
+        this.toggleActive(true);
+    }
+    
+    public void deactivate() {
+        this.toggleActive(false);
+    }
+    
+    private void toggleActive(boolean isActive) {
+        if(this.jobId == -1) {
+            logger.error("Error during job delete: JobId required to update job");
+            return;
+        }       
+        int active = isActive ? 1 : 0;
+        StringBuffer updateQuery = new StringBuffer()
+                .append("UPDATE jobs SET isActive=" + active + " WHERE jobId=" + this.jobId);
+        try {
+            logger.trace(updateQuery.toString());
+            MySqlConnection.executeUpdate(updateQuery.toString());
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+    }
+    
+    public void softDelete() {
+        if(this.jobId == -1) {
+            logger.error("Error during job delete: JobId required to update job");
+            return;
+        }       
+        StringBuffer updateQuery = new StringBuffer()
+                .append("UPDATE jobs SET isDeleted=1 WHERE jobId=" + this.jobId);
+        try {
+            logger.trace(updateQuery.toString());
+            MySqlConnection.executeUpdate(updateQuery.toString());
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+    }
+    
     public static JobDao select(int jobId){
         StringBuffer selectJobsQuery = new StringBuffer()
                 .append("SELECT * FROM jobs WHERE jobId='" + jobId + "';");  
@@ -135,7 +176,7 @@ public class JobDao extends AbstractDao {
     public static List<JobDao> selectAll(){
         List<JobDao> responseJobs = new ArrayList<JobDao>();
         StringBuffer selectJobsQuery = new StringBuffer()
-                .append("SELECT * FROM jobs;");  
+                .append("SELECT * FROM jobs WHERE isDeleted=0;");  
         try {
             ResultSet rs = MySqlConnection.executeQuery(selectJobsQuery.toString());
             while(rs.next()) {

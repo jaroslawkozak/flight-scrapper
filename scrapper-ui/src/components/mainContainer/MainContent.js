@@ -18,7 +18,7 @@ class Content extends Component {
   }
   
   handleFlightEntryClick(flightEntry){
-    if(flightEntry == this.state.currentFlightEntry){
+    if(flightEntry === this.state.currentFlightEntry){
       this.setState( { displayEntryDetails : this.toggleBool(this.state.displayEntryDetails) } );
     } else{
       this.setState( { currentFlightEntry : flightEntry,

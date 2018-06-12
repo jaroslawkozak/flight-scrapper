@@ -22,7 +22,7 @@ class singleFlightDetailEntry extends Component {
             {flightDetails.currency.currencyCode}
           </div>
         </div>
-        <img className="airlineName" src={WizzairLogo}/> <br />
+        <img className="airlineName" src={WizzairLogo} alt="airline_logo"/> <br />
       </div>
     )
   }

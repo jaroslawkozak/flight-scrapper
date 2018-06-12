@@ -48,11 +48,11 @@ class JobFlightDataTable extends Component {
         data.rows.push(flightData[i].outboundFlightDate);
       } 
 
-      if(data.min == -1 || data.min > flightData[i].price){
+      if(data.min === -1 || parseInt(data.min, 10) > parseInt(flightData[i].price, 10)){
         data.min = flightData[i].price;
       } 
 
-      if(data.max == -1 || data.max < flightData[i].price){
+      if(data.max === -1 || parseInt(data.max, 10) < parseInt(flightData[i].price, 10)){
         data.max = flightData[i].price;
       }
     }
