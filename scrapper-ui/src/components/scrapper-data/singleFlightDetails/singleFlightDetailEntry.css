@@ -9,7 +9,7 @@
 .singleFlightContent {
     font-family: Source Sans Pro,sans-serif;
     padding: 5px;
-    width: inherit;
+    width: auto;
 }
 
 .airlineName{
@@ -28,6 +28,7 @@
 
 .currency {
     display: inline-block;
+    color: rgb(100, 100, 100);
 }
 
 .hours {
@@ -37,5 +38,5 @@
 .city {
     font-size: 20px;
     font-weight: bold;
-    width: inherit;
+    width: auto;
 }

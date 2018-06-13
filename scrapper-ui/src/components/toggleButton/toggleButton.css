@@ -1,4 +1,5 @@
 .switch {
+	display: inline-block;
 	float: right;
 }
 

@@ -1,21 +1,23 @@
 .flightEntry {
 	float: left;
+	margin: 1px;
 	padding: 5px;
 	border: solid 1px;
 	border-radius: 5px;
 	border-color: #AAAAAA;
-
+	width: -webkit-fill-available;
 	font-size: 11px;
 }
 
 .flightLabel {
 	float: left;
+	margin: 1px;
 	padding: 5px;
 	border: solid 1px;
 	border-radius: 5px;
 	border-color: #AAAAAA;
-
-	font-size: 10px;
+	width: -webkit-fill-available;
+	font-size: 12px;
 }
 
 .flightDetailsWrapper {

@@ -11,6 +11,8 @@ class JobsComponent extends Component {
                   loading: true };
     this.getJobs();
     this.handleJobClick = this.handleJobClick.bind(this);
+    this.handleJobDelete = this.handleJobDelete.bind(this);
+    this.handleToggleClick = this.handleToggleClick.bind(this);
   }
 
   render(){
@@ -18,26 +20,47 @@ class JobsComponent extends Component {
       this.state.loading ? <LoadingSpinner /> :
       this.state.jobs.map(function(item){
         return <Job
-                jobId={item.jobId}
-                departureStationIATA={item.departureStationIATA}
-                arrivalStationIATA={item.arrivalStationIATA}
-                isActive={item.isActive}
+                job={item}
                 onClick={this.handleJobClick}
+                onToggle={this.handleToggleClick}
+                onDelete={this.handleJobDelete}
               />;
       }, this)
     );
-  }
-
-  showJobs(){
-
   }
 
   handleJobClick(jobId){
     this.props.onClick(jobId);
   }
 
+  handleJobDelete(jobId){
+    this.deleteJob(jobId);
+  }
+
+  handleToggleClick(jobId, isChecked){
+    isChecked ? this.deactivateJob(jobId) : this.activateJob(jobId);
+  }
+
+  activateJob(jobId){
+    axios.post(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/jobs/activate?jobId=" + jobId)
+      .then(() => { this.getJobs(); this.render();})
+      .catch(error => console.log(error.response));
+  }
+
+  deactivateJob(jobId){
+    axios.post(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/jobs/deactivate?jobId=" + jobId)
+      .then(() => { this.getJobs(); this.render();})
+      .catch(error => console.log(error.response));
+  }
+
+  deleteJob(jobId){
+    axios.post(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/jobs/delete?jobId=" + jobId)
+      .then(() => { this.getJobs(); this.render();})
+      .catch(error => console.log(error.response));
+  }
+
   getJobs(){
-    axios.get(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/getJobs")
+    axios.get(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/jobs/get")
       .then(response => this.setState({jobs: response.data, loading: false}))
       .catch(error => console.log(error.response));
   }

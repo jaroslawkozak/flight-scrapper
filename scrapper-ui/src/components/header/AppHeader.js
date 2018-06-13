@@ -7,7 +7,7 @@ class AppHeader extends Component {
     return (
       <div className="header">
         <div className="headerTitle">
-          Flight-scrapper
+          FLIGHT-SCRAPPER
         </div>
         <NewJobForm />
       </div>

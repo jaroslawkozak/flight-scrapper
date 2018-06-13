@@ -39,7 +39,7 @@ class App extends Component {
 
   getJobData(jobId){
     this.setState({ loading: true }, () => {
-      axios.get(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/getJobData?jobId=" + jobId)
+      axios.get(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/flights/getOneMonthData?jobId=" + jobId)
         .then(response => this.setState({flightData: response.data, loading: false}))
         .catch(error => console.log(error.response));
     });

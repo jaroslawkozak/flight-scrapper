@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import JobFlightDataTable from './../scrapper-data/flightDataTable/JobFlightDataTable';
 import FlightDetails from './../scrapper-data/flightDataTable/flightDetails';
+import {hostsconfig} from '../../properties/config.js'
 import axios from 'axios'
 import './MainContent.css';
 
@@ -25,16 +26,13 @@ class Content extends Component {
                        outboundFlightDetails : [],
                        inboundFlightDetails : [],
                        displayEntryDetails : true} );
-      var DATA_MANAGER_HOST_ADDRESS = "http://10.22.90.79"
-      //var DATA_MANAGER_HOST_ADDRESS = "http://localhost"
-      var DATA_MANAGER_HOST_PORT = "7701";
   
       this.setState({ loadingDetails : true }, () => {
-        axios.get(DATA_MANAGER_HOST_ADDRESS + ":" + DATA_MANAGER_HOST_PORT + "/getFlightDetails?flightId=" + flightEntry.outboundFlightId)
+        axios.get(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/flights/getSingleFlightDetails?flightId=" + flightEntry.outboundFlightId)
         .then(response => this.setState( {outboundFlightDetails : response.data }))
         .catch(error => console.log(error.response));
 
-        axios.get(DATA_MANAGER_HOST_ADDRESS + ":" + DATA_MANAGER_HOST_PORT + "/getFlightDetails?flightId=" + flightEntry.inboundFlightId)
+        axios.get(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/flights/getSingleFlightDetails?flightId=" + flightEntry.inboundFlightId)
         .then(response => this.setState( {inboundFlightDetails : response.data, loadingDetails : false}))
         .catch(error => console.log(error.response));
       });

@@ -15,7 +15,7 @@ class Sidebar extends Component {
   render() {
     return (
       <aside className="left-sidebar">
-        <strong>Jobs:</strong>
+        <strong>JOBS:</strong>
         <JobHandler onClick={this.handleJobClick}/>
       </aside>
     );
