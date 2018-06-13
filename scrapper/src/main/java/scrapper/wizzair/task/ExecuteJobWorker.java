@@ -27,7 +27,7 @@ import scrapper.wizzair.dto.TimetableResponseDto;
 public class ExecuteJobWorker implements Runnable{
     private final static Logger logger = Logger.getLogger(ExecuteJobWorker.class);
     private static final String DATA_MANAGER_ADDRESS = "http://" + ScrapperConfiguration.getDataManagerHost() + ":" + ScrapperConfiguration.getDataManagerPort();
-    private static final String FLIGHT_RECORD_REQUEST = DATA_MANAGER_ADDRESS + "/recordedFlights?scrapperName=" + WizzairScrapperApplication.SCRAPPER_AIRLINE_NAME;
+    private static final String FLIGHT_RECORD_REQUEST = DATA_MANAGER_ADDRESS + "/flights/addFlightRecords?scrapperName=" + WizzairScrapperApplication.SCRAPPER_AIRLINE_NAME;
     private static final String JOB_REPORT_REQUEST = DATA_MANAGER_ADDRESS + "/jobReport";
     private static final String WIZZAIR_METADATA_URL = "https://wizzair.com/static/metadata.json";
     private static final String SCRAP_REQUEST = "/search/timetable";

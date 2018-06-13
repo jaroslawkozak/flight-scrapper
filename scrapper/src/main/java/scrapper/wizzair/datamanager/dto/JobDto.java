@@ -18,4 +18,5 @@ public class JobDto {
     private int totalFailed;
     private int failedInRow;
     private int isActive;
+    private int isDeleted;
 }

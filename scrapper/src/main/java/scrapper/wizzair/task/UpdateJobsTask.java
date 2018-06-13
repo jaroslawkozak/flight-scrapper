@@ -20,7 +20,7 @@ import scrapper.wizzair.datamanager.dto.JobDto;
 @EnableScheduling
 public class UpdateJobsTask extends TimerTask{
     private final static Logger logger = Logger.getLogger(UpdateJobsTask.class);
-    private static final String JOB_REQUEST = "http://" + ScrapperConfiguration.getDataManagerHost() + ":" + ScrapperConfiguration.getDataManagerPort() + "/getJobs";
+    private static final String JOB_REQUEST = "http://" + ScrapperConfiguration.getDataManagerHost() + ":" + ScrapperConfiguration.getDataManagerPort() + "/jobs/get";
     
     private List<JobDto> jobs = WizzairScrapperApplication.jobs;
     

@@ -53,8 +53,9 @@ public class JobDao extends AbstractDao {
     
     @Override
     public void insert() {
-        if(isExistInDB()) {
+        if(isExistInDB(true)) {
             logger.debug("Job with departureStationId=" + this.departureStationId + " and arrivalStationId=" + this.arrivalStationId + " already exists in database.");
+            
             return;
         }
         StringBuffer insertTableSQL = new StringBuffer()
@@ -66,13 +67,24 @@ public class JobDao extends AbstractDao {
     }
     
     private boolean isExistInDB() {
+        return isExistInDB(false);
+    }
+    
+    private boolean isExistInDB(boolean unDeleteIfPossible) {
         StringBuffer selectQuery = new StringBuffer()
                 .append("SELECT * FROM jobs WHERE ")
                 .append("departureStationId = \"" + this.departureStationId + "\"")
                 .append(" AND ")
                 .append("arrivalStationId = \"" + this.arrivalStationId + "\"");   
         try {
-            return MySqlConnection.executeQuery(selectQuery.toString()).first();
+            ResultSet rs = MySqlConnection.executeQuery(selectQuery.toString());
+            if(rs.first()) {
+                JobDao currentJob = new JobDao(rs);
+                if(currentJob.getIsDeleted() == 1) {
+                    currentJob.undelete();
+                }
+                return true;
+            }
         } catch (SQLException e) {            
             logger.error(e.getMessage());
         }
@@ -145,12 +157,21 @@ public class JobDao extends AbstractDao {
     }
     
     public void softDelete() {
+        setIsDeleteStatus(true);
+    }
+    
+    public void undelete() {
+        setIsDeleteStatus(false);
+    }
+    
+    private void setIsDeleteStatus(boolean isDeleted) {
         if(this.jobId == -1) {
             logger.error("Error during job delete: JobId required to update job");
             return;
-        }       
+        } 
+        int deleted = isDeleted ? 1 : 0;
         StringBuffer updateQuery = new StringBuffer()
-                .append("UPDATE jobs SET isDeleted=1 WHERE jobId=" + this.jobId);
+                .append("UPDATE jobs SET isDeleted=" + deleted + " WHERE jobId=" + this.jobId);
         try {
             logger.trace(updateQuery.toString());
             MySqlConnection.executeUpdate(updateQuery.toString());
