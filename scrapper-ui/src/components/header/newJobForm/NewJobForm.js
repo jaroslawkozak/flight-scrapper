@@ -27,7 +27,7 @@ class NewJobForm extends Component {
   }
 
   addJobRequest(){
-    axios.post(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/addJob?departureStation=" + this.state.origin + "&arrivalStation=" + this.state.destination)
+    axios.post(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/jobs/add?departureStation=" + this.state.origin + "&arrivalStation=" + this.state.destination)
       .catch(error => console.log(error.response));
   }
   

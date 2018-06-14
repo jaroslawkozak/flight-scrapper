@@ -9,6 +9,7 @@ class AppFooter extends Component {
         Job management <br />
         Flight details <br />
         Moving dates <br />
+        adding removed job doesn't undelete.
       </footer>
     );
   }

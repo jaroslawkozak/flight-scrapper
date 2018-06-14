@@ -28,10 +28,11 @@ class JobFlightDataTable extends Component {
     this.fillResultDataWithFligthData(resultData, flightData, data);
    
     let tableContent = [];
-    tableContent.push(<tr>{this.fillAndGetTableHeader(data.cols)}</tr>);
+    var counter = 1;
+    tableContent.push(<tr key={"row_" + counter++}>{this.fillAndGetTableHeader(data.cols)}</tr>);
 
     for(var rowIter = 0; rowIter < data.rows.length; rowIter++){
-      tableContent.push(<tr>{this.fillAndGetTableRow(resultData, data.cols, data.rows[rowIter])}</tr>);
+      tableContent.push(<tr key={"row_" + counter++}>{this.fillAndGetTableRow(resultData, data.cols, data.rows[rowIter])}</tr>);
     }
 
     let table = <table><tbody>{tableContent}</tbody></table>
@@ -96,9 +97,10 @@ class JobFlightDataTable extends Component {
 
   fillAndGetTableHeader(cols){
     let tableHeaderRow = [];
-    tableHeaderRow.push(<td></td>);
+    var counter=1;
+    tableHeaderRow.push(<td key={counter++}></td>);
     for(var columnIter = 0; columnIter < cols.length; columnIter++){
-      tableHeaderRow.push(<td><FlightLabel label={cols[columnIter]}/></td>)
+      tableHeaderRow.push(<td key={counter++}><FlightLabel label={cols[columnIter]}/></td>)
     }
     return tableHeaderRow;
   }

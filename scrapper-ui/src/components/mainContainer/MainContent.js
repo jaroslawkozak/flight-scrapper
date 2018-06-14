@@ -10,11 +10,13 @@ class Content extends Component {
     super();
     this.handleFlightEntryClick = this.handleFlightEntryClick.bind(this);
     this.state = { 
+      activeJob: 0,
       displayEntryDetails: false,
       loadingDetails: false,
       currentFlightEntry: [],
       outboundFlightDetails: [],
       inboundFlightDetails: [],
+      flightData: [],
     };
   }
   
@@ -40,8 +42,23 @@ class Content extends Component {
     }
   }
 
+  getJobData(jobId){
+    this.setState({ loading: true }, () => {
+      axios.get(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/flights/getOneMonthData?jobId=" + jobId)
+        .then(response => this.setState({flightData: response.data, loading: false}))
+        .catch(error => console.log(error.response));
+    });
+  }
+
   toggleBool(bool){
     return bool ? false : true;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.activeJob !== this.state.activeJob) {
+      this.setState({ activeJob: nextProps.activeJob });
+      this.getJobData(nextProps.activeJob);
+    }
   }
 
   render() {
@@ -54,7 +71,7 @@ class Content extends Component {
                                                 loading={this.state.loadingDetails} /> :""}
           <div className="flightData">
             <JobFlightDataTable 
-              flightData={this.props.flightData} 
+              flightData={this.state.flightData} 
               loading={this.props.loading} 
               onClick={this.handleFlightEntryClick}
             />

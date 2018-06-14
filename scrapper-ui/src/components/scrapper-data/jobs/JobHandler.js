@@ -24,6 +24,7 @@ class JobsComponent extends Component {
                 onClick={this.handleJobClick}
                 onToggle={this.handleToggleClick}
                 onDelete={this.handleJobDelete}
+                key={"job_" + item.jobId}
               />;
       }, this)
     );
@@ -61,9 +62,16 @@ class JobsComponent extends Component {
 
   getJobs(){
     axios.get(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/jobs/get")
-      .then(response => this.setState({jobs: response.data, loading: false}))
+      .then(response => {this.setState({jobs: response.data, loading: false}); this.render()})
       .catch(error => console.log(error.response));
   }
 
+  componentDidMount() {
+    var intervalId = setInterval(this.getJobs.bind(this), 10000);
+    this.setState({intervalId: intervalId});
+  }
+  componentWillUnmount() {
+    clearInterval(this.state.intervalId);
+  }
 }
 export default JobsComponent
