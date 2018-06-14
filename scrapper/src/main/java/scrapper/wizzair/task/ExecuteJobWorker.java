@@ -12,6 +12,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.http.HttpStatus;
 import io.restassured.RestAssured;
 import lombok.AllArgsConstructor;
 import scrapper.config.ScrapperConfiguration;
@@ -83,19 +84,18 @@ public class ExecuteJobWorker implements Runnable{
     }
     
     private void sendFlightRecordRequest(String response) {
-        try {   
-            RestAssured.given()
-                .contentType("application/json")
-                .body(response)
-                .when()
-                .post(FLIGHT_RECORD_REQUEST)
-                .then()
-                .assertThat()
-                .statusCode(202);
+        int statusCode =  RestAssured.given()
+            .contentType("application/json")
+            .body(response)
+            .when()
+            .post(FLIGHT_RECORD_REQUEST)
+            .getStatusCode(); 
+       
+        if(statusCode == HttpStatus.ACCEPTED.value()) {
             logger.debug("Sending flight records successfull");
-        } catch (AssertionError e) {
-            logger.error("Sending flight records failed. Failed response: " + response);
-            logger.error(e.getMessage());
+        } else {
+            logger.debug("Sending flight records failed. Failed response: " + response);
+            logger.debug("Status code expected: " + HttpStatus.ACCEPTED.value() + " actual: " + statusCode);
         }
     }
     
@@ -136,20 +136,18 @@ public class ExecuteJobWorker implements Runnable{
                 .toString();
     }
     
-    private void sendJobReport(JobDto job, JobStatus status) {     
-        try {
-            RestAssured.given()
+    private void sendJobReport(JobDto job, JobStatus status) {   
+        int statusCode =  RestAssured.given()
             .contentType("application/json")
             .body(getJobReportBody(job, status))
             .when()
             .post(JOB_REPORT_REQUEST)
-            .then()
-            .assertThat()
-            .statusCode(202);
+            .getStatusCode();
+     
+        if(statusCode == HttpStatus.ACCEPTED.value()) {
             logger.debug("Sending job " + job.getJobId() + " report successfull");
-        } catch (Exception e) {
-            logger.debug("Sending job " + job.getJobId() + " report failed");
-            logger.error(e.getMessage());
+        } else {
+            logger.debug("Sending job " + job.getJobId() + " report failed. Status code expected: " + HttpStatus.ACCEPTED.value() + " actual: " + statusCode);
         }
     }
 

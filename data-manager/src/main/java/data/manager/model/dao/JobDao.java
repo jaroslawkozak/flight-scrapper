@@ -54,8 +54,7 @@ public class JobDao extends AbstractDao {
     @Override
     public void insert() {
         if(isExistInDB(true)) {
-            logger.debug("Job with departureStationId=" + this.departureStationId + " and arrivalStationId=" + this.arrivalStationId + " already exists in database.");
-            
+            logger.debug("Job with departureStationId=" + this.departureStationId + " and arrivalStationId=" + this.arrivalStationId + " already exists in database.");   
             return;
         }
         StringBuffer insertTableSQL = new StringBuffer()
