@@ -11,7 +11,7 @@ import java.util.List;
 
 public class FlightHandler {
     public void parseTimetable(TimetableScrapDto timetable, String scrapperName) {
-        new Thread(new ParseTimeTableThread(timetable, scrapperName)).run();
+        new ParseTimeTableThread(timetable, scrapperName).run();
     }
     
     @AllArgsConstructor

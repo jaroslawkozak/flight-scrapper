@@ -30,16 +30,15 @@ public class ExecuteJobsTask extends TimerTask {
     	    if(job.getIsActive() == 0) { continue;}
     	    final int THREAD_POOL = 12;
   	        	    
-    	    ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL);
+    	    //ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL);
    	    
     	    for(int i = 0; i < THREAD_POOL ; i++) {
     	        String from = getFirstDayOfMonthDate(i);
     	        String to = getLastDayOfMonthDate(i);
     	        logger.debug("Starting sub-jobs with dates from: " + from + " to: " + to);
-    	        executor.execute(new ExecuteJobWorker(job, from, to));
+    	        new ExecuteJobWorker(job, from, to).run();
     	    }
-    	    executor.shutdown();
-            while (!executor.isTerminated()) {}
+
     	}
     }
 

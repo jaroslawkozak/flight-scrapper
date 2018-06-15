@@ -47,7 +47,7 @@ public class CurrencyCodeDao extends AbstractDao {
 
         try {
             String query = "SELECT COUNT(*) FROM currencyCodes WHERE " + fieldName + "='" + fieldValue + "'";
-            logger.debug(query);
+            logger.trace(query);
             if (!isCountOne(
                     MySqlConnection.executeQuery(query))) {
                 throw new CurrencyDataException(

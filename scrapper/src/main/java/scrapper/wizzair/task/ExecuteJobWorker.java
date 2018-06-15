@@ -32,7 +32,6 @@ public class ExecuteJobWorker implements Runnable{
     private static final String JOB_REPORT_REQUEST = DATA_MANAGER_ADDRESS + "/jobReport";
     private static final String WIZZAIR_METADATA_URL = "https://wizzair.com/static/metadata.json";
     private static final String SCRAP_REQUEST = "/search/timetable";
-    //https://wizzair.com/static/metadata.json
     private JobDto job;
     private String from;
     private String to;
@@ -45,7 +44,7 @@ public class ExecuteJobWorker implements Runnable{
         try {
             response = makeRequestAndGetResponseString(request);
         } catch (IOException e) {              
-            logger.error("Job " + job.getJobId() + " failed: " + e.getMessage());
+            logger.error("Job " + job.getJobId() + " failed: ", e);
             sendJobReport(job, JobStatus.FAILED);
             return;
         } 
