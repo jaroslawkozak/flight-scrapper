@@ -8,7 +8,8 @@ class JobsComponent extends Component {
   constructor(props){
     super(props);
     this.state = { jobs: [],
-                  loading: true };
+                  loading: true, 
+                  requested: false};
     this.getJobs();
     this.handleJobClick = this.handleJobClick.bind(this);
     this.handleJobDelete = this.handleJobDelete.bind(this);
@@ -61,13 +62,16 @@ class JobsComponent extends Component {
   }
 
   getJobs(){
-    axios.get(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/jobs/get")
-      .then(response => {this.setState({jobs: response.data, loading: false}); this.render()})
-      .catch(error => console.log(error.response));
+    if(this.state.requested == false) {
+      this.setState({requested: true}, () =>
+        axios.get(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/jobs/get")
+        .then(response => {this.setState({jobs: response.data, loading: false, requested: false}); this.render()})
+        .catch(error => {console.log(error.response); this.setState({loading: false, requested: false})}));
+    }
   }
 
   componentDidMount() {
-    var intervalId = setInterval(this.getJobs.bind(this), 10000);
+    var intervalId = setInterval(this.getJobs.bind(this), 30000);
     this.setState({intervalId: intervalId});
   }
   componentWillUnmount() {

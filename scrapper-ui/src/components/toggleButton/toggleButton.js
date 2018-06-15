@@ -10,7 +10,7 @@ class ToggleButton extends Component {
         var toggleId = "cmn-toggle-" + this.props.id;
         return (
             <div className="switch">
-                <input id={toggleId} className="cmn-toggle cmn-toggle-round" type="checkbox" checked={(this.props.isChecked === 1) ? true : false} onClick={this.props.toggleClick}/>
+                <input id={toggleId} className="cmn-toggle cmn-toggle-round" type="checkbox" checked={(this.props.isChecked === 1) ? true : false} onChange={this.props.toggleClick}/>
                 <label htmlFor={toggleId}></label>
             </div>
         );

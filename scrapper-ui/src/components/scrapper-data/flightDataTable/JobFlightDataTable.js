@@ -105,6 +105,10 @@ class JobFlightDataTable extends Component {
     return tableHeaderRow;
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.render();
+  }
+
   render() {
     return (
         this.props.loading ? <LoadingSpinner /> : this.getDataEntries()
