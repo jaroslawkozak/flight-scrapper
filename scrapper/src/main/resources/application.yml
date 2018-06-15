@@ -5,6 +5,8 @@ server:
       enabled: false
   jsp-servlet:
     registered: false
+  tomcat:
+    max-threads: 1
   
 spring:
   jmx:
