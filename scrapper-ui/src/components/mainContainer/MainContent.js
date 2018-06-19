@@ -26,7 +26,6 @@ class Content extends Component {
     if(this.state.activeJob !== 0){
       this.getJobDataFromDate(this.state.activeJob, fromDate)
     }
-    console.log('state', this.state.flightData);
   }
 
   handleFlightEntryClick(flightEntry){

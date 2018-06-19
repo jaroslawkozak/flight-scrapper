@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,7 +34,7 @@ public class FlightDao extends AbstractDao{
     private String airlineName;
     private String createdDate;
     private String updatedDate;
-    
+        
     public FlightDao() {}
     
     public FlightDao(ResultSet rs) throws SQLException {

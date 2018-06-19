@@ -9,7 +9,8 @@ class JobsComponent extends Component {
     super(props);
     this.state = { jobs: [],
                   loading: true, 
-                  requested: false};
+                  requested: false,
+                  intervalId: 0};
     this.getJobs();
     this.handleJobClick = this.handleJobClick.bind(this);
     this.handleJobDelete = this.handleJobDelete.bind(this);

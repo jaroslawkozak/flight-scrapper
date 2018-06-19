@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -63,6 +65,8 @@ public class JobDao extends AbstractDao {
                 .append(",\"" + this.arrivalStationId + "\"")
                 .append(")");                
         executeUpdate(insertTableSQL);
+        
+        
     }
     
     private boolean isExistInDB() {
@@ -179,33 +183,15 @@ public class JobDao extends AbstractDao {
         }
     }
     
-    public static JobDao select(int jobId){
-        StringBuffer selectJobsQuery = new StringBuffer()
-                .append("SELECT * FROM jobs WHERE jobId='" + jobId + "';");  
-      
-        try {
-            ResultSet rs = MySqlConnection.executeQuery(selectJobsQuery.toString());
-            rs.first();
-            return new JobDao(rs); 
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
-        return null;                        
+    public static JobDao select(int jobId){       
+        System.out.println("here");
+        return (JobDao) jdbcTemplate.queryForObject("SELECT * FROM jobs WHERE jobId='?';", new Object[] { jobId }, new BeanPropertyRowMapper(JobDao.class));                      
     }
     
-    public static List<JobDao> selectAll(){
-        List<JobDao> responseJobs = new ArrayList<JobDao>();
-        StringBuffer selectJobsQuery = new StringBuffer()
-                .append("SELECT * FROM jobs WHERE isDeleted=0;");  
-        try {
-            ResultSet rs = MySqlConnection.executeQuery(selectJobsQuery.toString());
-            while(rs.next()) {
-                responseJobs.add(new JobDao(rs));                    
-            }           
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
-        return responseJobs;
+    public static List<JobDao> selectAll(){  
+        System.out.println("here2");
+        System.out.println(jdbcTemplate);
+        return (List<JobDao>) jdbcTemplate.query("SELECT * FROM jobs WHERE isDeleted=0;", new BeanPropertyRowMapper(JobDao.class));
     }
 
     public JobDao setDepartureStationIATA(String departureStationIATA) {
