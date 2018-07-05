@@ -66,7 +66,7 @@ class JobsComponent extends Component {
     if(this.state.requested == false) {
       this.setState({requested: true}, () =>
         axios.get(hostsconfig.datamanager.host + ":" + hostsconfig.datamanager.port + "/jobs/get")
-        .then(response => {this.setState({jobs: response.data, loading: false, requested: false}); this.render()})
+        .then(response => {console.log({response}); this.setState({jobs: response.data, loading: false, requested: false}); this.render()})
         .catch(error => {console.log(error.response); this.setState({loading: false, requested: false})}));
     }
   }

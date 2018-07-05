@@ -1,7 +1,7 @@
 module.exports = {
     hostsconfig: {
         datamanager: {
-            host: "http://10.22.90.79",
+            host: "http://localhost",
             port: "7701"
         }
     }

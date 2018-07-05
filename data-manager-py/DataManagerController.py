@@ -1,18 +1,11 @@
 from flask import Flask
 from flask import request
 from Responses import ErrorResponse
-from db import Connection
+from dao import app, Job, Flight
+from dto import JobDto
+from dateutil.relativedelta import *
 import json
-
-app = Flask(__name__)
-
-class TestClass:
-    def __init__(self):
-        self.abs = 123
-        self.bsd = 2131
-
-    def getsome(self):
-        return self.abs
+import datetime
 
 def getError(name, message):
     return json.dumps(ErrorResponse(name, message).__dict__)
@@ -30,9 +23,11 @@ def add_job():
 
 @app.route("/jobs/get", methods=['GET'])
 def get_jobs():
-    #response = Connection.MySQLConnection().query("SELECT * FROM jobs WHERE isDeleted=0;")
-    response = "{ /jobs/get : not implemented }"
-    return response
+    jobs = Job.get_jobs()
+    jobsDto = []
+    for job in jobs:
+        jobsDto.append(JobDto(job).__dict__)
+    return json.dumps(jobsDto)
 
 @app.route('/jobs/activate', methods=['POST'])
 def activate_job():
@@ -65,9 +60,18 @@ def get_one_month_data():
     if(not jobId):
         return getError("Missing parameter", "jobId is required for that request")
     if(not fromDate):
-        True
-        #TODO set fromDate to today's date
+        fromDate = str(datetime.date.today())
 
+    job = Job.get_single_job(jobId)
+
+    airports = [job.departureAirport.IATA, job.arrivalAirport.IATA]
+
+    toDate = fromDate + relativedelta(months=+1)
+#TODO
+
+    Flight.get_flights(airports, airports, fromDate, )
+
+    print(fromDate)
     response = "{ /flights/getOneMonthData : not implemented }"
     return response
 
@@ -100,6 +104,7 @@ def job_report():
     return response
 
 if __name__ == "__main__":
-    app.run(debug=True, threaded=True)
+    app.run(host='0.0.0.0', port=7701, debug=True, threaded=True)
+
 
 
