@@ -1,11 +1,12 @@
 from flask import Flask
 from flask import request
 from Responses import ErrorResponse
+from utils import timeUtils
 from dao import app, Job, Flight
 from dto import JobDto
-from dateutil.relativedelta import *
 import json
 import datetime
+
 
 def getError(name, message):
     return json.dumps(ErrorResponse(name, message).__dict__)
@@ -66,8 +67,7 @@ def get_one_month_data():
 
     airports = [job.departureAirport.IATA, job.arrivalAirport.IATA]
 
-    toDate = fromDate + relativedelta(months=+1)
-
+    toDate = timeUtils.add_one_month(fromDate)
 
     Flight.get_flights(airports, airports, fromDate, toDate)
 
@@ -102,23 +102,6 @@ def job_report():
 
     response = "{ /jobReport : not implemented }"
     return response
-
-
-def add_one_month(orig_date):
-    format_str = '%Y-%m-%d'  # The format
-    orig_date = datetime.datetime.strptime(orig_date, format_str)
-    # advance year and month by one month
-    new_year = orig_date.year
-    new_month = orig_date.month + 1
-    # note: in datetime.date, months go from 1 to 12
-    if new_month > 12:
-        new_year += 1
-        new_month -= 12
-
-    last_day_of_month = calendar.monthrange(new_year, new_month)[1]
-    new_day = min(orig_date.day, last_day_of_month)
-
-    return str(orig_date.replace(year=new_year, month=new_month, day=new_day))
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=7701, debug=True, threaded=True)
