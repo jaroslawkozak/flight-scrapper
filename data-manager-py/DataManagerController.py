@@ -3,7 +3,7 @@ from flask import request
 from Responses import ErrorResponse
 from utils import timeUtils
 from dao import app, Job, Flight
-from dto import JobDto
+from dto import JobDto, FlightDto
 import json
 import datetime
 
@@ -65,15 +65,24 @@ def get_one_month_data():
 
     job = Job.get_single_job(jobId)
 
-    airports = [job.departureAirport.IATA, job.arrivalAirport.IATA]
+    airports = [job.departureStationId, job.arrivalStationId]
 
     toDate = timeUtils.add_one_month(fromDate)
 
-    Flight.get_flights(airports, airports, fromDate, toDate)
+    flights =  Flight.get_flights(airports, airports, fromDate, toDate)
 
-    print(fromDate)
-    response = "{ /flights/getOneMonthData : not implemented }"
-    return response
+    flightsDto = []
+
+    for flight in flights:
+
+        flightsDto.append(FlightDto(flight).__dict__)
+#TODO sortowanie wych i przych, wygenerowac na tej podstawie tablie z FlightDataDto
+
+
+    return json.dumps(flightsDto)
+    #print(fromDate)
+    #response = "{ /flights/getOneMonthData : not implemented }"
+    #return response
 
 @app.route('/flights/getSingleFlightDetails', methods=['GET'])
 def get_single_flight_details():

@@ -58,10 +58,10 @@ class Flight(db.Model):
     updatedDate = Column('updatedDate', DateTime)
 
     @staticmethod
-    def get_flights(departureStationIATAs, arrivalStationIATAs, fromDate, toDate):
+    def get_flights(departureStationIds, arrivalStationIds, fromDate, toDate):
         return Flight.query\
-                .filter(or_(Flight.departureStationIATA == v for v in departureStationIATAs))\
-                .filter(or_(Flight.arrivalStationIATA == v for v in arrivalStationIATAs))\
+                .filter(or_(Flight.departureStationId == v for v in departureStationIds))\
+                .filter(or_(Flight.arrivalStationId == v for v in arrivalStationIds))\
                 .filter(Flight.departureDate >= fromDate, Flight.departureDate <= toDate)\
                 .all()
 

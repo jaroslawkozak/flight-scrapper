@@ -67,7 +67,6 @@ class Job extends Component {
   render() {
     const { jobId, departureStationIATA, arrivalStationIATA, lastSuccessfull }  = this.props.job;
     const classes = (this.props.job.isActive === 1) ? this.getClassIfIdle("jobItem") : "jobItem inactive";
-    console.log(this.props.job)
     return (
         <li key={jobId} className={classes} >
           <div className="jobDetails" onClick={this.jobClick}>

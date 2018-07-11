@@ -16,3 +16,9 @@ def add_one_month(orig_date):
     new_day = min(orig_date.day, last_day_of_month)
 
     return orig_date.replace(year=new_year, month=new_month, day=new_day).strftime('%Y-%m-%d')
+
+def get_days_between(fromDateStr, toDateStr):
+    format_str = '%Y-%m-%dT%H:%M:%S'
+    from_date = datetime.datetime.strptime(fromDateStr, format_str)
+    to_date = datetime.datetime.strptime(toDateStr, format_str)
+    return (to_date-from_date).days

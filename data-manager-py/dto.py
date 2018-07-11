@@ -1,3 +1,5 @@
+from utils import timeUtils
+
 class JobDto:
     def __init__(self, job):
         self.jobId = job.jobId
@@ -20,7 +22,7 @@ class FlightDto:
         self.flightId = flight.flightId
         self.departureStationIATA = flight.departureAirport.IATA
         self.arrivalStationIATA = flight.arrivalAirport.IATA
-        self.departureDate = flight.departureDate
+        self.departureDate = flight.departureDate.isoformat()
         self.amount = flight.amount
         self.currencyId = flight.currencyId
         self.priceType = flight.priceType
@@ -28,6 +30,16 @@ class FlightDto:
         self.classOfService = flight.classOfService
         self.hasMacFlight = flight.hasMacFLight
         self.airlineName = flight.airline.airlineName
-        self.createdDate = flight.createdDate
-        self.updatedDate = flight.updatedDate
+        self.createdDate = flight.createdDate.isoformat()
+        self.updatedDate = flight.updatedDate.isoformat()
+
+class FlightDataDto:
+    def __init__(self, outbound, inbound):
+        self.outboundFlightId = outbound.flightId
+        self.inboundFlightId = inbound.flightId
+        self.outboundFlightDate = outbound.departureDate
+        self.inboundFlightDate = inbound.departureDate
+        self.days = timeUtils.get_days_between(outbound.departureDate, inbound.departureDate)
+        self.price = outbound.amount + inbound.amount
+
 
