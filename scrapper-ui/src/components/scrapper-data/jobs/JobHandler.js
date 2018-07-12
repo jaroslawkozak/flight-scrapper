@@ -11,7 +11,6 @@ class JobsComponent extends Component {
                   loading: true, 
                   requested: false,
                   intervalId: 0};
-    this.getJobs();
     this.handleJobClick = this.handleJobClick.bind(this);
     this.handleJobDelete = this.handleJobDelete.bind(this);
     this.handleToggleClick = this.handleToggleClick.bind(this);
@@ -72,6 +71,7 @@ class JobsComponent extends Component {
   }
 
   componentDidMount() {
+    this.getJobs();
     var intervalId = setInterval(this.getJobs.bind(this), 30000);
     this.setState({intervalId: intervalId});
   }

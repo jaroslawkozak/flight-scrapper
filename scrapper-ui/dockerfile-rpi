@@ -1,8 +1,11 @@
-FROM jsurf/rpi-java
+FROM resin/rpi-raspbian
 
-ADD target/data-manager-0.0.1-SNAPSHOT.jar /app/
-ADD src/main/resources/ /src/main/resources/
+RUN apt-get update
+RUN apt-get upgrade
+RUN apt-get install npm
+RUN apt-get install nodejs-legacy
+RUN npm install http-server -g
 
-CMD java -jar /app/data-manager-0.0.1-SNAPSHOT.jar
+EXPOSE 3000
 
-EXPOSE 7701
+CMD http-server /app -c-1 --cors -p 3000

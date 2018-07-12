@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ToggleButton from '../../toggleButton/toggleButton.js'
-import deleteImage from '../../../images/status/delete.svg'
+import deleteImage from 'images/status/delete.svg'
 import errorImage from '../../../images/status/error.svg'
 import warningIdleImage from '../../../images/status/warning.svg'
 import okImage from '../../../images/status/ok.svg'
