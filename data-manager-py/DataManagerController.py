@@ -3,7 +3,7 @@ from flask import request
 from Responses import ErrorResponse
 from utils import timeUtils
 from dao import app, Job, Flight
-from dto import JobDto, FlightDto
+from dto import JobDto, FlightDataDto
 import json
 import datetime
 
@@ -56,6 +56,7 @@ def delete_job():
 
 @app.route('/flights/getOneMonthData', methods=['GET'])
 def get_one_month_data():
+    MAXIMUM_FLIGHT_DURATION = 30
     jobId = request.args.get('jobId')
     fromDate = request.args.get('fromDate')
     if(not jobId):
@@ -64,18 +65,31 @@ def get_one_month_data():
         fromDate = str(datetime.date.today())
 
     job = Job.get_single_job(jobId)
-
     airports = [job.departureStationId, job.arrivalStationId]
-
     toDate = timeUtils.add_one_month(fromDate)
+    flights = Flight.get_flights(airports, airports, fromDate, toDate)
 
-    flights =  Flight.get_flights(airports, airports, fromDate, toDate)
 
-    flightsDto = []
+    outFlightsDto = []
+    inFlightsDto = []
+
 
     for flight in flights:
+        if((job.departureAirport.IATA == flight.departureAirport.IATA) and (job.arrivalAirport.IATA == flight.arrivalAirport.IATA)):
+            outFlightsDto.append(flight)
+        elif((job.departureAirport.IATA == flight.arrivalAirport.IATA) and (job.arrivalAirport.IATA == flight.departureAirport.IATA)):
+            inFlightsDto.append(flight)
+        else:
+            print("Error in flight: departure " + flight.departureAirport.IATA + " arrival " + flight.arrivalAirport.IATA)
 
-        flightsDto.append(FlightDto(flight).__dict__)
+    flightsDto = []
+    for outbound in outFlightsDto:
+        for inbound in inFlightsDto:
+            daysBetween = timeUtils.get_days_between(outbound.departureDate, inbound.departureDate)
+            if(daysBetween > 0 and daysBetween <= MAXIMUM_FLIGHT_DURATION):
+                flightsDto.append(FlightDataDto(outbound, inbound))
+
+        #flightsDto.append(FlightDto(flight).__dict__)
 #TODO sortowanie wych i przych, wygenerowac na tej podstawie tablie z FlightDataDto
 
 
