@@ -10,6 +10,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app)
 
+
 class Airline(db.Model):
     __tablename__ = 'airlines'
     airlineId = Column('airlineId', Integer, primary_key=True)

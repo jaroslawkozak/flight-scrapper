@@ -1,6 +1,7 @@
 import datetime
 import calendar
 
+
 def add_one_month(orig_date):
     format_str = '%Y-%m-%d'  # The format
     orig_date = datetime.datetime.strptime(orig_date, format_str)
@@ -17,8 +18,18 @@ def add_one_month(orig_date):
 
     return orig_date.replace(year=new_year, month=new_month, day=new_day).strftime('%Y-%m-%d')
 
-def get_days_between(fromDateStr, toDateStr):
-    format_str = '%Y-%m-%dT%H:%M:%S'
-    from_date = datetime.datetime.strptime(fromDateStr, format_str)
-    to_date = datetime.datetime.strptime(toDateStr, format_str)
-    return (to_date-from_date).days
+
+def get_days_between(from_date_str, to_date_str):
+    try:
+        return __get_days_between_ext('%Y-%m-%dT%H:%M:%S', from_date_str, to_date_str)
+    except ValueError:
+        try:
+            return __get_days_between_ext('%Y-%m-%d %H:%M:%S', from_date_str, to_date_str)
+        except ValueError:
+            raise ValueError
+
+
+def __get_days_between_ext(format_str, from_date_str, to_date_str):
+    from_date = datetime.datetime.strptime(from_date_str, format_str)
+    to_date = datetime.datetime.strptime(to_date_str, format_str)
+    return (to_date - from_date).days
