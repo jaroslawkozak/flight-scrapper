@@ -33,7 +33,7 @@ def activate_job():
     job_id = request.args.get('jobId')
     if not job_id :
         return get_error("Missing parameter", "jobId is required for that request")
-    json_message = "{ /jobs/activate : not implemented }"
+    json_message = JobService.activate(job_id)
     return Response(json_message, status=200, mimetype='application/json')
 
 
@@ -42,7 +42,7 @@ def deactivate_job():
     job_id = request.args.get('jobId')
     if not job_id :
         return get_error("Missing parameter", "jobId is required for that request")
-    json_message = "{ /jobs/deactivate : not implemented }"
+    json_message = JobService.deactivate(job_id)
     return Response(json_message, status=200, mimetype='application/json')
 
 
@@ -51,7 +51,7 @@ def delete_job():
     job_id = request.args.get('jobId')
     if not job_id :
         return get_error("Missing parameter", "jobId is required for that request")
-    json_message = "{ /jobs/delete : not implemented }"
+    json_message = JobService.delete(job_id)
     return Response(json_message, status=200, mimetype='application/json')
 
 

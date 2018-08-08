@@ -95,4 +95,18 @@ class Job(db.Model):
             .filter(Job.jobId == jobId)\
             .first()
 
+    @staticmethod
+    def activate(jobId):
+        return Job.update().where(Job.jobId == jobId).values(isActive='1')
 
+    @staticmethod
+    def deactivate(jobId):
+        return Job.update().where(Job.jobId == jobId).values(isActive='0')
+
+    @staticmethod
+    def delete(jobId):
+        return Job.update().where(Job.jobId == jobId).values(isDeleted='1')
+
+    @staticmethod
+    def undelete(jobId):
+        return Job.update().where(Job.jobId == jobId).values(isDeleted='0')
