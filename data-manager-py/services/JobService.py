@@ -11,6 +11,10 @@ def get_jobs_json():
     return json.dumps(jobs_dto)
 
 
+def add(departure_station_iata, arrival_station_iata):
+    return Job.add_job(departure_station_iata, arrival_station_iata)
+
+
 def activate(jobId):
     return Job.activate(jobId)
 

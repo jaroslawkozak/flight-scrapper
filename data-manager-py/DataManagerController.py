@@ -18,7 +18,7 @@ def add_job():
         return get_error("Missing parameter", "departureStation is required for that request"), 412
     if not arrival_station:
         return get_error("Missing parameter", "arrivalStation is required for that request"), 412
-    json_message = "{ /jobs/add : not implemented }"
+    json_message = JobService.add(departure_station, arrival_station)
     return Response(json_message, status=200, mimetype='application/json')
 
 

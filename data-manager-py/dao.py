@@ -31,6 +31,10 @@ class Airport(db.Model):
     timezone = Column('timezone', Float)
     DST = Column('DST', Unicode)
 
+    @staticmethod
+    def get_id_from_iata(iata):
+        return Airport.query.filter(Airport.IATA == iata).first().airportId
+
 
 class Currency(db.Model):
     __tablename__ = 'currencyCodes'
@@ -84,15 +88,40 @@ class Job(db.Model):
     isDeleted = Column('isDeleted', Integer)
 
     @staticmethod
+    def add_job(departure_station_iata, arrival_station_iata):
+        departure_station_id = Airport.get_id_from_iata(departure_station_iata);
+        arrival_station_id = Airport.get_id_from_iata(arrival_station_iata)
+
+        tmpJob = Job.__is_job_exist(departure_station_id, arrival_station_id)
+        if tmpJob:
+            if tmpJob.isDeleted == 1:
+                tmpJob.isDeleted = 0
+                db.session.commit()
+                return Job.__get_response_msg("job has been restored")
+            else:
+                return Job.__get_response_msg("job is already in the system")
+        else:
+            db.session.add(Job(departureStationId=departure_station_id,
+                               arrivalStationId=arrival_station_id,
+                               status="new",
+                               totalSuccess=0,
+                               totalFailed=0,
+                               failedInRow=0,
+                               isActive=1,
+                               isDeleted=0))
+            db.session.commit()
+            return Job.__get_response_msg("added new job")
+
+    @staticmethod
     def get_jobs():
         return Job.query\
             .filter(Job.isDeleted == 0)\
             .all()
 
     @staticmethod
-    def get_single_job(jobId):
+    def get_single_job(job_id):
         return Job.query\
-            .filter(Job.jobId == jobId).first()
+            .filter(Job.jobId == job_id).first()
 
     @staticmethod
     def activate(jobId):
@@ -138,3 +167,14 @@ class Job(db.Model):
     @staticmethod
     def __get_response_msg(response):
         return "{ \"response\" : \"" + response + "\"}"
+
+    @staticmethod
+    def __is_job_exist(departure_station_id, arrival_station_id):
+        tmpJob = Job.query \
+            .filter(Job.departureStationId == departure_station_id) \
+            .filter(Job.arrivalStationId == arrival_station_id) \
+            .first()
+        if tmpJob is None:
+            return False
+        else:
+            return tmpJob
