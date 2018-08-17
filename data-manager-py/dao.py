@@ -92,21 +92,49 @@ class Job(db.Model):
     @staticmethod
     def get_single_job(jobId):
         return Job.query\
-            .filter(Job.jobId == jobId)\
-            .first()
+            .filter(Job.jobId == jobId).first()
 
     @staticmethod
     def activate(jobId):
-        return Job.update().where(Job.jobId == jobId).values(isActive='1')
+        tmp = Job.get_single_job(jobId)
+        if tmp is None:
+            return Job.__get_error_msg_no_job(jobId)
+        tmp.isActive = 1
+        db.session.commit()
+        return Job.__get_response_msg("activated job " + jobId)
 
     @staticmethod
     def deactivate(jobId):
-        return Job.update().where(Job.jobId == jobId).values(isActive='0')
+        tmp = Job.get_single_job(jobId)
+        if tmp is None:
+            return Job.__get_error_msg_no_job(jobId)
+        tmp.isActive = 0
+        db.session.commit()
+        return Job.__get_response_msg("deactivated job " + jobId)
 
     @staticmethod
     def delete(jobId):
-        return Job.update().where(Job.jobId == jobId).values(isDeleted='1')
+
+        tmp = Job.get_single_job(jobId)
+        if tmp is None:
+            return Job.__get_error_msg_no_job(jobId)
+        tmp.isDeleted = 1
+        db.session.commit()
+        return Job.__get_response_msg("deleted job " + jobId)
 
     @staticmethod
     def undelete(jobId):
-        return Job.update().where(Job.jobId == jobId).values(isDeleted='0')
+        tmp = Job.get_single_job(jobId)
+        if tmp is None:
+            return Job.__get_error_msg_no_job(jobId)
+        tmp.isDeleted = 0
+        db.session.commit()
+        return Job.__get_response_msg("undeleted job " + jobId)
+
+    @staticmethod
+    def __get_error_msg_no_job(jobId):
+        return "{ \"error\" : \"no job found with id=" + jobId + "\"}"
+
+    @staticmethod
+    def __get_response_msg(response):
+        return "{ \"response\" : \"" + response + "\"}"

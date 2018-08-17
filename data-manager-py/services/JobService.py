@@ -12,16 +12,16 @@ def get_jobs_json():
 
 
 def activate(jobId):
-    return Job.activate(jobId);
+    return Job.activate(jobId)
 
 
 def deactivate(jobId):
-    return Job.dectivate(jobId);
+    return Job.deactivate(jobId)
 
 
 def delete(jobId):
-    return Job.delete(jobId);
+    return Job.delete(jobId)
 
 
 def undelete(jobId):
-    return Job.undelete(jobId);
+    return Job.undelete(jobId)
