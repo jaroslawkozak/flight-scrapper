@@ -1,6 +1,8 @@
-from dao import Job, Flight
+from dao import Job, Flight, Airport, Currency
 from utils import timeUtils
-from dto import FlightDataDto
+from Responses import ErrorResponse
+from dto import FlightDataDto, FlightDetailsDto, FlightDto, AirportDto, CurrencyDto
+import json
 
 MAXIMUM_FLIGHT_DURATION = 30
 
@@ -33,3 +35,17 @@ def get_one_month_data(job_id, from_date):
                 flights_dto_response.append(FlightDataDto(outbound, inbound).__dict__)
 
     return flights_dto_response
+
+
+def get_flight_details(flight_id):
+    flight = Flight.get(flight_id)
+    if flight is None:
+        return json.dumps(ErrorResponse("Error: No flight.", "Requested flight doesn't exist").__dict__)
+    departure_airport = flight.departureAirport
+    arrival_airport = flight.arrivalAirport
+    currency = Currency.get(flight.currencyId)
+
+    return json.dumps(FlightDetailsDto(FlightDto(flight).__dict__,
+                                       AirportDto(departure_airport).__dict__,
+                                       AirportDto(arrival_airport).__dict__,
+                                       CurrencyDto(currency).__dict__).__dict__)

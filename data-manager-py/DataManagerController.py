@@ -72,7 +72,7 @@ def get_single_flight_details():
     flight_id = request.args.get('flightId')
     if not flight_id:
         return get_error("Missing parameter", "flightId is required for that request")
-    json_message = "{ \"/flights/getSingleFlightDetails\" : \"not implemented\" }"
+    json_message = FlightService.get_flight_details(flight_id)
     return Response(json_message, status=200, mimetype='application/json')
 
 

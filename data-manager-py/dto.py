@@ -1,6 +1,28 @@
 from utils import timeUtils
 
 
+class AirportDto:
+    def __init__(self, airport):
+        self.airportId = airport.airportId
+        self.name = airport.name
+        self.city = airport.city
+        self.country = airport.country
+        self.IATA = airport.IATA
+        self.ICAO = airport.ICAO
+        self.latitude = airport.latitude
+        self.longitude = airport.longitude
+        self.altitude = airport.altitude
+        self.timezone = airport.timezone
+        self.DST = airport.DST
+
+
+class CurrencyDto:
+    def __init__(self, currency):
+        self.currencyId = currency.currencyId
+        self.currencyCode = currency.currencyCode
+        self.currencyName = currency.currencyName
+
+
 class JobDto:
     def __init__(self, job):
         self.jobId = job.jobId
@@ -44,4 +66,9 @@ class FlightDataDto:
         self.days = timeUtils.get_days_between(str(outbound.departureDate), str(inbound.departureDate))
         self.price = outbound.amount + inbound.amount
 
-
+class FlightDetailsDto:
+    def __init__(self, flight, depAirport, arrAirport, currency):
+        self.flight = flight
+        self.departureAirport = depAirport
+        self.arrivalAirport = arrAirport
+        self.currency = currency

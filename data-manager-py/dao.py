@@ -33,14 +33,21 @@ class Airport(db.Model):
 
     @staticmethod
     def get_id_from_iata(iata):
-        return Airport.query.filter(Airport.IATA == iata).first().airportId
+        return Airport.get(iata).airportId
 
+    @staticmethod
+    def get(iata):
+        return Airport.query.filter(Airport.IATA == iata).first()
 
 class Currency(db.Model):
     __tablename__ = 'currencyCodes'
     currencyId = Column('currencyId', Integer, primary_key=True)
     currencyCode = Column('currencyCode', Unicode)
     currencyName = Column('currencyName', Unicode)
+
+    @staticmethod
+    def get(currency_id):
+        return Currency.query.filter(Currency.currencyId == currency_id).first()
 
 
 class Flight(db.Model):
@@ -69,6 +76,10 @@ class Flight(db.Model):
                 .filter(or_(Flight.arrivalStationId == v for v in arrivalStationIds))\
                 .filter(Flight.departureDate >= fromDate, Flight.departureDate <= toDate)\
                 .all()
+
+    @staticmethod
+    def get(flight_id):
+        return Flight.query.filter(Flight.flightId == flight_id).first()
 
 
 class Job(db.Model):
