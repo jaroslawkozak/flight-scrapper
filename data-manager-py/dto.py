@@ -49,7 +49,8 @@ class FlightDto:
         self.amount = flight.amount
         self.currencyId = flight.currencyId
         self.priceType = flight.priceType
-        self.departureDates = flight.departureDates
+        self.departureDates = []
+        self.departureDates.append(flight.departureDates) #assuming single element array, might change in future
         self.classOfService = flight.classOfService
         self.hasMacFlight = flight.hasMacFLight
         self.airlineName = flight.airline.airlineName
@@ -68,7 +69,9 @@ class FlightDataDto:
 
 class FlightDetailsDto:
     def __init__(self, flight, depAirport, arrAirport, currency):
-        self.flight = flight
+        self.flightData = flight
         self.departureAirport = depAirport
         self.arrivalAirport = arrAirport
         self.currency = currency
+
+

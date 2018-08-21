@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from sqlalchemy import Integer, Float, Unicode, ForeignKey, DateTime, Column, or_
 from sqlalchemy.orm import relationship
+from time import gmtime, strftime
 
 app = Flask('data-manager')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:qwe123@10.22.90.79/flight-scrapper'
@@ -16,6 +17,9 @@ class Airline(db.Model):
     airlineId = Column('airlineId', Integer, primary_key=True)
     airlineName = Column('airlineName', Unicode)
 
+    @staticmethod
+    def get_id_from_name(name):
+        return Airline.query.filter(Airline.airlineName == name).first().airlineId
 
 class Airport(db.Model):
     __tablename__ = 'airports'
@@ -80,6 +84,45 @@ class Flight(db.Model):
     @staticmethod
     def get(flight_id):
         return Flight.query.filter(Flight.flightId == flight_id).first()
+
+    @staticmethod
+    def add_or_update(flight_dto):
+        departure_station_id = Airport.get_id_from_iata(flight_dto['departureStationIATA'])
+        arrival_station_id = Airport.get_id_from_iata(flight_dto['arrivalStationIATA'])
+        airline_id = Airline.get_id_from_name(flight_dto['airlineName'])
+        now_date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+
+        print now_date
+        tmp_flight = Flight.query.filter(Flight.departureStationId == departure_station_id)\
+                    .filter(Flight.arrivalStationId == arrival_station_id)\
+                    .filter(Flight.departureDate == flight_dto['departureDate'])\
+                    .filter(Flight.airlineId == airline_id).first()
+
+        print type(tmp_flight)
+
+        if tmp_flight is None:
+            db.session.add(Flight(departureStationId=departure_station_id,
+                   arrivalStationId=arrival_station_id,
+                   departureDate=flight_dto['departureDate'],
+                   amount=flight_dto['amount'],
+                   currencyId=flight_dto['currencyId'],
+                   priceType=flight_dto['priceType'],
+                   departureDates=flight_dto['departureDates'],
+                   classOfService=flight_dto['classOfService'],
+                   hasMacFlight=flight_dto['hasMacFlight'],
+                   airlineId=airline_id,
+                   createdDate=now_date,
+                   updatedDate=now_date))
+            db.session.commit()
+        else:
+            tmp_flight.amount=flight_dto['amount']
+            tmp_flight.currencyId=flight_dto['currencyId']
+            tmp_flight.priceType=flight_dto['priceType']
+            tmp_flight.departureDates=flight_dto['departureDates']
+            tmp_flight.classOfService=flight_dto['classOfService']
+            tmp_flight.hasMacFlight=flight_dto['hasMacFlight']
+            tmp_flight.updatedDate=now_date
+            db.session.commit()
 
 
 class Job(db.Model):

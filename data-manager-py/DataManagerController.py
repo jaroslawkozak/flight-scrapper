@@ -84,6 +84,11 @@ def add_flight_records():
         return get_error("Missing parameter", "timetable body is required for that request")
     if not scrapper_name:
         return get_error("Missing parameter", "scrapperName is required for that request")
+
+
+    FlightService.add_flight_records(timetable)
+
+
     json_message = "{ /flights/addFlightRecords : not implemented }"
     return Response(json_message, status=200, mimetype='application/json')
 

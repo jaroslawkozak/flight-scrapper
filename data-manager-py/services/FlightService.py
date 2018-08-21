@@ -49,3 +49,22 @@ def get_flight_details(flight_id):
                                        AirportDto(departure_airport).__dict__,
                                        AirportDto(arrival_airport).__dict__,
                                        CurrencyDto(currency).__dict__).__dict__)
+
+
+def add_flight_records(timetable):
+    try:
+        for inboundFlight in timetable['inboundFlights']:
+            Flight.add_or_update(inboundFlight)
+
+
+
+        print "yes in"
+    except KeyError:
+        print "no in"
+
+    try:
+        timetable['outboundFlights']
+        print "yes out"
+    except KeyError:
+        print "no out"
+
