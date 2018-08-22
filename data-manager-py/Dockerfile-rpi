@@ -1,0 +1,8 @@
+FROM hypriot/rpi-python
+WORKDIR /usr/src/app
+
+COPY . .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+EXPOSE 7701
