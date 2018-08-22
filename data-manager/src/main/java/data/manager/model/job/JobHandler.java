@@ -20,7 +20,8 @@ public class JobHandler {
         @Override
         public void run() {
             JobDao job = JobDao.select(jobReport.getJobId());
-            logger.debug("Job report received for job " + jobReport.getJobId() + " from " + jobReport.getScrapperName() + " scrapper with status " + jobReport.getStatus());
+            logger.debug("Job report received for job " + jobReport.getJobId() + " from "
+                    + jobReport.getScrapperName() + " scrapper with status " + jobReport.getStatus());
             job.update(jobReport.getStatus());        
         }
         

@@ -29,3 +29,11 @@ def delete(jobId):
 
 def undelete(jobId):
     return Job.undelete(jobId)
+
+
+def process_job_report(report):
+    try:
+        print "Job report received for job " + str(report['jobId']) + " from " + report['scrapperName'] + " scrapper with status " + report['status']
+        return Job.updateStatus(report)
+    except KeyError:
+        return "Received incomplete report"

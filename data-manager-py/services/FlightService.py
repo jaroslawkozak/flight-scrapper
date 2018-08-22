@@ -55,16 +55,11 @@ def add_flight_records(timetable):
     try:
         for inboundFlight in timetable['inboundFlights']:
             Flight.add_or_update(inboundFlight)
-
-
-
-        print "yes in"
     except KeyError:
-        print "no in"
-
+        print "INFO: No inbound flights received."
     try:
-        timetable['outboundFlights']
-        print "yes out"
+        for outboundFlights in timetable['outboundFlights']:
+            Flight.add_or_update(outboundFlights)
     except KeyError:
-        print "no out"
+        print "INFO: No outbound flights received."
 

@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from sqlalchemy import Integer, Float, Unicode, ForeignKey, DateTime, Column, or_
 from sqlalchemy.orm import relationship
-from time import gmtime, strftime
+import datetime
 
 app = Flask('data-manager')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:qwe123@10.22.90.79/flight-scrapper'
@@ -56,7 +56,7 @@ class Currency(db.Model):
 
 class Flight(db.Model):
     __tablename__ = 'flights'
-    flightId = Column('flightId', Integer, primary_key=True)
+    flightId = Column('flightId', Integer, primary_key=True, autoincrement=True)
     departureStationId = Column('departureStationId', Integer, ForeignKey('airports.airportId'), primary_key=True)
     departureAirport = relationship("Airport", foreign_keys=[departureStationId])
     arrivalStationId = Column('arrivalStationId', Integer, ForeignKey('airports.airportId'), primary_key=True)
@@ -67,7 +67,7 @@ class Flight(db.Model):
     priceType = Column('priceType', Unicode)
     departureDates = Column('departureDates', Unicode)
     classOfService = Column('classOfService', Unicode)
-    hasMacFLight = Column('hasMacFLight', Unicode)
+    hasMacFlight = Column('hasMacFLight', Unicode)
     airlineId = Column('airlineId', Integer, ForeignKey('airlines.airlineId'), primary_key=True)
     airline = relationship("Airline", foreign_keys=[airlineId])
     createdDate = Column('createdDate', DateTime)
@@ -90,16 +90,11 @@ class Flight(db.Model):
         departure_station_id = Airport.get_id_from_iata(flight_dto['departureStationIATA'])
         arrival_station_id = Airport.get_id_from_iata(flight_dto['arrivalStationIATA'])
         airline_id = Airline.get_id_from_name(flight_dto['airlineName'])
-        now_date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-
-        print now_date
+        now_date = datetime.datetime.utcnow()
         tmp_flight = Flight.query.filter(Flight.departureStationId == departure_station_id)\
                     .filter(Flight.arrivalStationId == arrival_station_id)\
                     .filter(Flight.departureDate == flight_dto['departureDate'])\
                     .filter(Flight.airlineId == airline_id).first()
-
-        print type(tmp_flight)
-
         if tmp_flight is None:
             db.session.add(Flight(departureStationId=departure_station_id,
                    arrivalStationId=arrival_station_id,
@@ -107,7 +102,7 @@ class Flight(db.Model):
                    amount=flight_dto['amount'],
                    currencyId=flight_dto['currencyId'],
                    priceType=flight_dto['priceType'],
-                   departureDates=flight_dto['departureDates'],
+                   departureDates=unicode(flight_dto['departureDates']),
                    classOfService=flight_dto['classOfService'],
                    hasMacFlight=flight_dto['hasMacFlight'],
                    airlineId=airline_id,
@@ -118,7 +113,7 @@ class Flight(db.Model):
             tmp_flight.amount=flight_dto['amount']
             tmp_flight.currencyId=flight_dto['currencyId']
             tmp_flight.priceType=flight_dto['priceType']
-            tmp_flight.departureDates=flight_dto['departureDates']
+            tmp_flight.departureDates=unicode(flight_dto['departureDates'])
             tmp_flight.classOfService=flight_dto['classOfService']
             tmp_flight.hasMacFlight=flight_dto['hasMacFlight']
             tmp_flight.updatedDate=now_date
@@ -213,6 +208,36 @@ class Job(db.Model):
         tmp.isDeleted = 0
         db.session.commit()
         return Job.__get_response_msg("undeleted job " + jobId)
+
+    @staticmethod
+    def updateStatus(job_report):
+        tmpJob = Job.get_single_job(job_report['jobId'])
+        if tmpJob is None:
+            msg = "Error: Job doesn't exist (job id " + str(job_report['jobId']) + ")"
+            print msg
+            return msg
+        status = job_report['status']
+
+        if status == "SUCCESS":
+            tmpJob.status = unicode("ok")
+            tmpJob.lastSuccessfull = datetime.datetime.now()
+            tmpJob.totalSuccess = tmpJob.totalSuccess + 1
+            tmpJob.failedInRow = 0
+            db.session.commit()
+            return "ok"
+        elif status == "FAILED":
+            tmpJob.status = unicode("failing")
+            tmpJob.lastFailed = datetime.datetime.now()
+            tmpJob.totalFailed = tmpJob.totalFailed + 1
+            tmpJob.failedInRow = tmpJob.failedInRow + 1
+            db.session.commit()
+            return "ok"
+        elif status == "ON_HOLD" or status == "NOT_ACTIVE":
+            return "ok"
+        else:
+            msg = "Error: Incorrect Job status (" + status + ")"
+            print msg
+            return msg
 
     @staticmethod
     def __get_error_msg_no_job(jobId):

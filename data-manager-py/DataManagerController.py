@@ -84,12 +84,8 @@ def add_flight_records():
         return get_error("Missing parameter", "timetable body is required for that request")
     if not scrapper_name:
         return get_error("Missing parameter", "scrapperName is required for that request")
-
-
     FlightService.add_flight_records(timetable)
-
-
-    json_message = "{ /flights/addFlightRecords : not implemented }"
+    json_message = ""
     return Response(json_message, status=200, mimetype='application/json')
 
 
@@ -97,8 +93,9 @@ def add_flight_records():
 def job_report():
     job_report_data = request.get_json(silent=True)
     if not job_report_data:
-        return get_error("Missing parameter", "timetable body is required for that request")
-    json_message = "{ /jobReport : not implemented }"
+        return get_error("Missing parameter", "job report body is required for that request")
+    response_msg = JobService.process_job_report(job_report_data)
+    json_message = "{ \"response\" : \"" + response_msg + "\"}"
     return Response(json_message, status=200, mimetype='application/json')
 
 
